@@ -1,0 +1,26 @@
+<html><head><link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+<style>#map {height: 100%;}</style>
+</head>
+<body>
+<script>
+
+var crs = L.CRS.EPSG3857;
+
+function proj(lat,lon)
+{
+    document.write(lat + ", " + lon + " = " +
+        crs.latLngToPoint(L.latLng(lat,lon), 0) + "<br>\n");
+}
+
+
+document.write("Testing Leaflet projections:<br>\n");
+proj(0,-180);
+proj(0,0);
+proj(0,180);
+proj(90,-180);
+proj(-90,-180);
+
+
+
+</script></body></html>
