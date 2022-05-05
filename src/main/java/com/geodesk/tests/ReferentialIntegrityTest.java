@@ -5,13 +5,15 @@ import com.geodesk.core.Box;
 import com.geodesk.feature.*;
 
 import com.geodesk.feature.filter.TypeBits;
+import com.geodesk.feature.query.EmptyView;
+import com.geodesk.feature.query.WorldView;
 import com.geodesk.feature.store.StoredFeature;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
 import static org.junit.Assert.*;
 
 /**
@@ -177,6 +179,8 @@ public class ReferentialIntegrityTest
         long areas = 0;
         long allHighways = 0;
         long linealHighways = 0;
+        long linealRailways = 0;
+        long linealRailwayHighways = 0;
 
         for(Feature f: features)
         {
@@ -184,11 +188,14 @@ public class ReferentialIntegrityTest
             if(f instanceof Way) allWays++;
             if(f instanceof Relation) allRelations++;
             if(f.isArea()) areas++;
-            if(f.hasTag("highway") && !f.stringValue("highway").equals("no"))
-            {
-                allHighways++;
-                if (f instanceof Way && !f.isArea()) linealHighways++;
-            }
+            boolean isHighway = f.hasTag("highway") && !f.stringValue("highway").equals("no");
+            boolean isRailway = f.hasTag("railway") && !f.stringValue("railway").equals("no");
+            boolean isLineal = f instanceof Way && !f.isArea();
+
+            if(isHighway) allHighways++;
+            if(isHighway && isLineal)  linealHighways++;
+            if(isRailway && isLineal)  linealRailways++;
+            if(isHighway && isRailway && isLineal)  linealRailwayHighways++;
         }
 
         assertTrue(nodes > 0);
@@ -203,6 +210,32 @@ public class ReferentialIntegrityTest
         assertEquals(allHighways, features.features("*[highway]").count());
         assertEquals(linealHighways, features.features("w[highway]").count());
         assertEquals(linealHighways, features.ways("w[highway]").count());
+        assertEquals(linealRailways, features.ways("w[railway]").count());
+        assertEquals(linealRailwayHighways, features.features("w[railway][highway]").count());
+        assertEquals(linealRailwayHighways, features.features("w[railway]")
+            .ways("*[highway]").count());
+        assertEquals(linealRailwayHighways, features.features("w[highway]")
+            .ways("*[railway]").count());
+
+        WorldView<?> linealWaysQuery = (WorldView<?>) features.ways()
+            .features("wa[highway]")
+            .ways("*[railway][highway]")
+            .features("w");
+        assertEquals(TypeBits.NONAREA_WAYS, linealWaysQuery.types());
+
+        assertEquals(linealRailwayHighways, features.ways()
+            .features("wa[highway]")
+            .ways("*[railway][highway]")
+            .features("*[railway]")
+            .features("w")
+            .count());
+
+        Features<?> empty = features.ways()
+            .features("wa[highway]")
+            .ways("*[railway][highway]")
+            .features("*[railway]")
+            .nodes();
+        assertTrue(empty instanceof EmptyView<?>);
     }
 
     /**
@@ -218,5 +251,61 @@ public class ReferentialIntegrityTest
                 assertTrue(rel.members().contains(f));
             }
         }
+    }
+
+    void testContainsQueries(Features<?> features, Set<Feature> others)
+    {
+        testContains(features.features("a[landuse]"), others);
+        testContains(features
+            .nodes("na[shop]")
+            .features("*[opening_hours]"),
+            others);
+     }
+
+    @Test public void testContains()
+    {
+        Set<Feature> others = randomSample(features, 10_000);
+
+        testContainsQueries(features, others);
+        for(int i=0; i<1000; i++)
+        {
+            testContainsQueries(features.in(boxes.random(3000, 10_000)), others);
+        }
+    }
+
+    /**
+     * Checks whether contains() returns true/false for features that are in/
+     * not in a collection
+     *
+     * @param features  the collection to test
+     * @param others    features that may be in the collection, but not likely
+     */
+    void testContains(Features<?> features, Set<Feature> others)
+    {
+        Set<Feature> notContained = new HashSet<>(others);
+        for(Feature f: features)
+        {
+            assertTrue(features.contains(f));
+            notContained.remove(f);
+        }
+        for(Feature f: notContained)
+        {
+            assertFalse(features.contains(f));
+        }
+    }
+
+    Set<Feature> randomSample(Features<?> features, int sampleInterval)
+    {
+        Set<Feature> sample = new HashSet<>();
+        Random random = new Random();
+        int skip = random.nextInt(sampleInterval);
+        for(Feature f: features)
+        {
+            skip--;
+            if(skip > 0) continue;
+            sample.add(f);
+            skip = random.nextInt(sampleInterval);
+        }
+        return sample;
     }
 }
