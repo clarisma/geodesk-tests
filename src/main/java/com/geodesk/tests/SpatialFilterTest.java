@@ -33,7 +33,7 @@ public class SpatialFilterTest
             .in(Box.atLonLat(12.0231, 48.3310))
             .first();
         Geometry bavariaPoly = bavaria.toGeometry();
-        PreparedPolygon bavariaPrepared = new PreparedPolygon((Polygonal)bavariaPoly);
+        PreparedPolygon bavariaPrepared = new PreparedPolygon((Polygonal) bavariaPoly);
 
         long startQuery = System.currentTimeMillis();
 
@@ -43,11 +43,11 @@ public class SpatialFilterTest
          */
         Features<?> places = world
             .features("a[leisure=pitch][sport=soccer]");
-        int count=0;
+        int count = 0;
 
         Set<Feature> found = new HashSet<>();
 
-        for(Feature place: places.in(Box.of(bavariaPoly)))
+        for (Feature place : places.in(Box.of(bavariaPoly)))
         {
             // out.println(place.stringValue("name"));
             // count++;
@@ -58,7 +58,7 @@ public class SpatialFilterTest
                 count++;
             }
              */
-            if(bavariaPrepared.contains(place.toGeometry()))
+            if (bavariaPrepared.contains(place.toGeometry()))
             {
                 // out.println(place.stringValue("name"));
                 found.add(place);
@@ -66,7 +66,7 @@ public class SpatialFilterTest
             }
         }
 
-        for(Feature place: places.in(Box.of(bavariaPoly)))
+        for (Feature place : places.in(Box.of(bavariaPoly)))
         {
             // out.println(place.stringValue("name"));
             // count++;
@@ -77,9 +77,9 @@ public class SpatialFilterTest
                 count++;
             }
              */
-            if(bavariaPrepared.intersects(place.toGeometry()))
+            if (bavariaPrepared.intersects(place.toGeometry()))
             {
-                if(!found.contains(place))
+                if (!found.contains(place))
                 {
                     out.format("%s intersects, but not contained in\n", place);
                 }
@@ -87,7 +87,7 @@ public class SpatialFilterTest
         }
         long end = System.currentTimeMillis();
         out.format("Found %d features in %d ms (Total runtime %d ms)\n", count,
-            end-startQuery, end-start);
+            end - startQuery, end - start);
     }
 
     @Test public void testSpatialBuildings()
@@ -99,18 +99,18 @@ public class SpatialFilterTest
             .in(Box.atLonLat(12.0231, 48.3310))
             .first();
         Geometry bavariaPoly = bavaria.toGeometry();
-        PreparedPolygon bavariaPrepared = new PreparedPolygon((Polygonal)bavariaPoly);
+        PreparedPolygon bavariaPrepared = new PreparedPolygon((Polygonal) bavariaPoly);
 
-        for(int i=0; i<10; i++)
+        for (int i = 0; i < 10; i++)
         {
             long startQuery = System.currentTimeMillis();
             Features<?> places = world.features("a[building]");
             long count = 0; // places.in(Box.of(bavariaPoly)).count();
 
-            for(Feature place: places.in(Box.of(bavariaPoly)))
+            for (Feature place : places.in(Box.of(bavariaPoly)))
             {
                 Geometry candidateGeom = place.toGeometry();
-                if(candidateGeom != null && bavariaPrepared.contains(candidateGeom))
+                if (candidateGeom != null && bavariaPrepared.contains(candidateGeom))
                 {
                     count++;
                 }
@@ -131,9 +131,9 @@ public class SpatialFilterTest
             .in(Box.atLonLat(12.0231, 48.3310))
             .first();
         Geometry bavariaPoly = bavaria.toGeometry();
-        PreparedPolygon bavariaPrepared = new PreparedPolygon((Polygonal)bavariaPoly);
+        PreparedPolygon bavariaPrepared = new PreparedPolygon((Polygonal) bavariaPoly);
 
-        for(int i=0; i<10; i++)
+        for (int i = 0; i < 10; i++)
         {
             try
             {
@@ -150,7 +150,7 @@ public class SpatialFilterTest
                 out.format("Found %d features in %d ms (Total runtime %d ms)\n", count,
                     end - startQuery, end - start);
             }
-            catch(Throwable ex)
+            catch (Throwable ex)
             {
                 Log.error("%s", ex);
                 ex.printStackTrace();
@@ -169,7 +169,7 @@ public class SpatialFilterTest
         //Geometry bavariaPoly = bavaria.toGeometry();
         //PreparedPolygon bavariaPrepared = new PreparedPolygon((Polygonal)bavariaPoly);
 
-        for(int i=0; i<10; i++)
+        for (int i = 0; i < 10; i++)
         {
             long startQuery = System.currentTimeMillis();
             Features<?> places = world.features("a[building]");
@@ -199,20 +199,20 @@ public class SpatialFilterTest
         Log.debug("Fetching country geometry...");
         Geometry germanyPoly = germany.toGeometry();
         Log.debug("Preparing country geometry...");
-        PreparedPolygon germanyPrepared = new PreparedPolygon((Polygonal)germanyPoly);
+        PreparedPolygon germanyPrepared = new PreparedPolygon((Polygonal) germanyPoly);
         Log.debug("Country geometries ready.");
 
-        for(int i=0; i<1; i++)
+        for (int i = 0; i < 1; i++)
         {
             long startQuery = System.currentTimeMillis();
             Features<?> states = world.features("a[boundary=administrative][admin_level=4][name]");
 
             List<State> stateList = new ArrayList<>();
 
-            for(Feature state: states.in(Box.of(germanyPoly)))
+            for (Feature state : states.in(Box.of(germanyPoly)))
             {
                 Geometry stateGeom = state.toGeometry();
-                if(stateGeom != null && germanyPrepared.contains(stateGeom))
+                if (stateGeom != null && germanyPrepared.contains(stateGeom))
                 {
                     State s = new State();
                     s.feature = state;
@@ -231,10 +231,10 @@ public class SpatialFilterTest
             Set<Feature> countySet = new HashSet<>();
             List<Geometry> countyGeometries = new ArrayList<>();
 
-            for(Feature county: counties.in(Box.of(germanyPoly)))
+            for (Feature county : counties.in(Box.of(germanyPoly)))
             {
                 Geometry countyGeom = county.toGeometry();
-                if(countyGeom != null && germanyPrepared.contains(countyGeom))
+                if (countyGeom != null && germanyPrepared.contains(countyGeom))
                 {
                     countyCount++;
                     countySet.add(county);
@@ -257,14 +257,14 @@ public class SpatialFilterTest
             map.save("c:\\geodesk\\germany-counties-total.html");
             Log.debug("Map created.");
 
-            for(State s: stateList)
+            for (State s : stateList)
             {
-                s.prepared = new PreparedPolygon((Polygonal)s.geom);
+                s.prepared = new PreparedPolygon((Polygonal) s.geom);
             }
 
             startQuery = System.currentTimeMillis();
             countyCount = 0;
-            for(State s: stateList)
+            for (State s : stateList)
             {
                 counties = world.features("a[boundary=administrative][admin_level=6][name]");
                 for (Feature county : counties.in(Box.of(s.geom)))
@@ -281,11 +281,116 @@ public class SpatialFilterTest
             out.format("Found %d counties in German states in %d ms\n",
                 countyCount, end - startQuery);
 
-            for(Feature f: countySet)
+            for (Feature f : countySet)
             {
                 Log.debug("%s was found by country query, but not be state query", f);
             }
         }
     }
 
+    @Test public void testSpatialCityBuildings()
+    {
+        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        for(int run=0; run<10; run++)
+        {
+            long start = System.currentTimeMillis();
+            long cityCount = 0;
+            long totalBuildingCount = 0;
+            Feature cityWithMostBuildings = null;
+            long mostBuildings = 0;
+            for (Feature city : world
+                .features("a[boundary=administrative][admin_level=8][name]"))
+            {
+                // Log.debug("- %s", city.stringValue("name"));
+                cityCount++;
+                long cityBuildingCount = world
+                    .features("a[building]")
+                    .select(Filters.within(city))
+                    .count();
+                if(cityBuildingCount > mostBuildings)
+                {
+                    mostBuildings = cityBuildingCount;
+                    cityWithMostBuildings = city;
+                    Log.debug("- %s: %s", city.stringValue("name"), cityBuildingCount);
+                }
+                totalBuildingCount += cityBuildingCount;
+            }
+            long end = System.currentTimeMillis();
+            Log.debug("Found %d cities with %d buildings in %d ms",
+                cityCount, totalBuildingCount, end - start);
+            Log.debug("%s has most buildings (%d)",
+                cityWithMostBuildings.stringValue("name"), mostBuildings);
+        }
+        world.close();
+    }
+
+    @Test public void testSpatialCityChurches()
+    {
+        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        for(int run=0; run<10; run++)
+        {
+            long start = System.currentTimeMillis();
+            long cityCount = 0;
+            long totalChurchCount = 0;
+            Feature cityWithMostChurches = null;
+            long mostChurches = 0;
+            for (Feature city : world
+                .features("a[boundary=administrative][admin_level=8][name]"))
+            {
+                // Log.debug("- %s", city.stringValue("name"));
+                cityCount++;
+                long cityChurchCount = world
+                    .features("na[amenity=place_of_worship][religion=christian]")
+                    .select(Filters.within(city))
+                    .count();
+                if(cityChurchCount > mostChurches)
+                {
+                    mostChurches = cityChurchCount;
+                    cityWithMostChurches = city;
+                }
+                totalChurchCount += cityChurchCount;
+            }
+            long end = System.currentTimeMillis();
+            Log.debug("Found %d cities with %d churches in %d ms",
+                cityCount, totalChurchCount, end - start);
+            Log.debug("%s has most churches (%d)",
+                cityWithMostChurches.stringValue("name"), mostChurches);
+        }
+        world.close();
+    }
+
+    @Test public void testSpatialCityChurchesBbox()
+    {
+        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        for(int run=0; run<10; run++)
+        {
+            long start = System.currentTimeMillis();
+            long cityCount = 0;
+            long totalChurchCount = 0;
+            Feature cityWithMostChurches = null;
+            long mostChurches = 0;
+            for (Feature city : world
+                .features("a[boundary=administrative][admin_level=8][name]"))
+            {
+                // Log.debug("- %s", city.stringValue("name"));
+                cityCount++;
+                long cityChurchCount = world
+                    .features("na[amenity=place_of_worship][religion=christian]")
+                    .in(city.bounds())
+                    .count();
+                if(cityChurchCount > mostChurches)
+                {
+                    mostChurches = cityChurchCount;
+                    cityWithMostChurches = city;
+                }
+                totalChurchCount += cityChurchCount;
+            }
+            long end = System.currentTimeMillis();
+            Log.debug("Found %d cities with %d churches in %d ms",
+                cityCount, totalChurchCount, end - start);
+            Log.debug("%s has most churches (%d)",
+                cityWithMostChurches.stringValue("name"), mostChurches);
+        }
+        world.close();
+    }
 }

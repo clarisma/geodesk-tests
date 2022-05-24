@@ -1,10 +1,9 @@
 package com.geodesk.feature.store;
 
+import com.clarisma.common.util.Log;
 import com.geodesk.core.Tile;
 import com.geodesk.core.Box;
 import com.geodesk.geom.Bounds;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,8 +11,6 @@ import java.nio.file.Path;
 
 public class TileIndexWalkerTest
 {
-    public static final Logger log = LogManager.getLogger();
-
     TestFeatureStore features;
 
     @Before
@@ -30,7 +27,7 @@ public class TileIndexWalkerTest
 
     private void walk(Bounds bounds)
     {
-        log.debug("Bounds: {}", bounds);
+        Log.debug("Bounds: %s", bounds);
         TileIndexWalker walker = new TileIndexWalker(
             features.baseMapping(), features.tileIndexPointer(),
             features.zoomLevels());
@@ -38,7 +35,7 @@ public class TileIndexWalkerTest
         while(walker.next())
         {
             int tile = walker.tile();
-            log.debug(Tile.toString(tile));
+            Log.debug(Tile.toString(tile));
         }
     }
 

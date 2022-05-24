@@ -1,14 +1,14 @@
 package com.geodesk.benchmark;
 
 import com.clarisma.common.fab.FabReader;
+import com.clarisma.common.util.Log;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
 import com.geodesk.feature.Tags;
 import com.geodesk.feature.Way;
 import com.geodesk.core.Box;
 import com.geodesk.geom.Bounds;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import org.eclipse.collections.api.list.primitive.MutableLongList;
 import org.eclipse.collections.impl.factory.primitive.LongLists;
 import org.locationtech.jts.util.Stopwatch;
@@ -36,8 +36,6 @@ import java.util.function.BiConsumer;
  */
 public class QueryBenchmark
 {
-    public static final Logger log = LogManager.getLogger();
-
     private static Map<String,Class<?>> taskClasses = new HashMap<>();
 
     static
@@ -123,7 +121,7 @@ public class QueryBenchmark
                 kvConsumer = this::queries;
                 break;
             default:
-                log.warn("Skipping unknown section: {}", key);
+                Log.warn("Skipping unknown section: %s", key);
             }
         }
 
@@ -346,7 +344,7 @@ public class QueryBenchmark
             BenchmarkTask task = (BenchmarkTask)taskConstructor.newInstance();
             task.init(features, queryString, boxes, 0, boxes.length);
             timer.start();
-            log.debug("Executing...");
+            Log.debug("Executing...");
             count = task.call().longValue();
             time = timer.stop();
             result = task.result;
@@ -357,7 +355,7 @@ public class QueryBenchmark
         bm.totalFeatures = count;
         bm.times.add(time);
 
-        log.debug("{} for {} boxes ({}): {} features in {} ms, {} = {}",
+        Log.debug("%s for %d boxes (%s): %d features in %s ms, %s = %f",
             queryString, boxes.length, parallel ? "parallel" : "sequential",
             count, time, resultKey, result / count);
     }
@@ -371,7 +369,7 @@ public class QueryBenchmark
         {
             String name = e.getKey();
             BoxSpecs spec = e.getValue();
-            log.info("Preparing boxes for {} - size {}", area, name);
+            Log.debug("Preparing boxes for %s - size %s", area, name);
             Path path = outputPath.resolve(String.format("%s-%s.boxes", area, name));
             boxes.put(name, RandomBoxes.loadOrCreate(path, features, areaBounds,
                 spec.count, spec.minMeters, spec.maxMeters, 10));
@@ -443,7 +441,7 @@ public class QueryBenchmark
 
     void performOne(Map<String,Benchmark> benchmarks, String benchmark, Map<String, RandomBoxes> boxes) throws Exception
     {
-        log.debug(benchmark);
+        Log.debug(benchmark);
         String[] parts = benchmark.split("-");
         String query = parts[0];
         String task = parts[1];
@@ -511,7 +509,7 @@ public class QueryBenchmark
 
     public static void main(String[] args) throws Exception
     {
-        new QueryBenchmark().perform("c:\\geodesk\\benchmarks", "C:\\geodesk\\tests\\de.gol", "germany");
+        new QueryBenchmark().perform("c:\\geodesk\\benchmarks", "C:\\geodesk\\tests\\de3.gol", "germany");
         // new QueryBenchmark().perform("/home/md/geodesk/benchmarks", "/home/md/geodesk/tests/de4.gol", "germany");
     }
 }

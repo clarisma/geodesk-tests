@@ -7,7 +7,7 @@ import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
 import com.geodesk.geom.Bounds;
-import com.geodesk.map.SlippyMap;
+import com.geodesk.util.MapMaker;
 import org.eclipse.collections.api.map.primitive.LongObjectMap;
 import org.eclipse.collections.api.map.primitive.MutableLongObjectMap;
 import org.eclipse.collections.api.set.primitive.MutableLongSet;
@@ -90,16 +90,15 @@ public class QueryDiscrepancyTest
                 System.err.println(msg);
                 passed.set(false);
 
-                SlippyMap map = new SlippyMap();
-                map.setProjection(new MercatorToWSG84());
-                map.addRectangle(bbox);
-                map.addFeature(f);
+                MapMaker map = new MapMaker();
+                map.add(bbox);
+                map.add(f);
                 try
                 {
-                    map.writeHtml(rootPath.resolve(
-                            String.format("tests/maps/discrepancy-%d-%d.html",
-                            set1.hashCode(), fid))
-                        .toFile());
+                    map.save(rootPath.resolve(
+                        String.format("tests/maps/discrepancy-%d-%d.html",
+                        set1.hashCode(), fid))
+                        .toString());
                 }
                 catch(Exception ex)
                 {

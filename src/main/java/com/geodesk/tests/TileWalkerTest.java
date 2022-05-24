@@ -18,7 +18,7 @@ public class TileWalkerTest
 {
     @Test public void testTileWalker() throws Exception
     {
-        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de3.gol");
         Feature bavaria = world
             .features("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
@@ -40,14 +40,22 @@ public class TileWalkerTest
             tileCount++;
 
             boolean outside = bavariaPrepared.disjoint(tileGeom);
-            boolean inside  = bavariaPrepared.containsProperly(tileGeom);
+            boolean inside;
+            if(outside)
+            {
+                inside = false;
+            }
+            else
+            {
+                inside = bavariaPrepared.containsProperly(tileGeom);
+            }
             if(outside) tilesOutside++;
             if(inside) tilesInside++;
 
             if(!inside && !outside) map.add(tileGeom);
         }
         map.add(bavariaPoly).color("red");
-        map.save("c:\\geodesk\\tile-walker-test.html");
+        map.save("c:\\geodesk\\tile-walker-test-de3.html");
 
         Log.debug("%d tiles in bbox", tileCount);
         Log.debug("  %d tiles outside", tilesOutside);

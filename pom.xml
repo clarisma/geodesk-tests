@@ -32,6 +32,7 @@
       	<!-- <scope>test</scope> -->
     </dependency>
 
+    <!-- Hardware information (for benchmarks only) -->
     <dependency>
         <groupId>com.github.oshi</groupId>
         <artifactId>oshi-core</artifactId>
