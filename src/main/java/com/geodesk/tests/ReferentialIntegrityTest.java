@@ -4,10 +4,13 @@ import com.clarisma.common.util.Log;
 import com.geodesk.core.Box;
 import com.geodesk.feature.*;
 
+import com.geodesk.feature.match.Matcher;
+import com.geodesk.feature.match.RoleMatcher;
 import com.geodesk.feature.match.TypeBits;
 import com.geodesk.feature.query.EmptyView;
 import com.geodesk.feature.query.WorldView;
 import com.geodesk.feature.store.StoredFeature;
+import com.geodesk.feature.store.StoredRelation;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,7 +34,10 @@ public class ReferentialIntegrityTest
     @Before
     public void setUp()
     {
-        features = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        // features = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        features = new FeatureLibrary("c:\\geodesk\\empty.store",
+            "file:///c:\\geodesk\\tests\\de-tiles");
+
         boxes = new BoxMaker(
             Box.ofWSEN(7.6872276841, 47.707433547, 12.6844378887, 53.8412264446));
     }
@@ -319,15 +325,10 @@ public class ReferentialIntegrityTest
     /**
      * This Test checks the following:
      *
-     * - A way's bounding box must be the tightest bbox that includes
-     *   all of its nodes
-     * - If a way is an area, its first and last node must be the same
-     * - An area must have at least 4 nodes; all others at least 2
-     * - Coordinates of the way must match the nodes
-     * - Geometry of an area must be polygonal
-     * - Geometry of non-area must be lineal
-     * - Nodes obtained via filters must match the results
-     *   of checking nodes "manually"
+     * - A way's bounding box must be the tightest bbox that includes all of its nodes - If a way is an area, its first
+     * and last node must be the same - An area must have at least 4 nodes; all others at least 2 - Coordinates of the
+     * way must match the nodes - Geometry of an area must be polygonal - Geometry of non-area must be lineal - Nodes
+     * obtained via filters must match the results of checking nodes "manually"
      */
     @Test public void testWays()
     {
@@ -358,9 +359,9 @@ public class ReferentialIntegrityTest
                 assertEquals(xy[nodeCount * 2 + 1], node.y());
                 nodeCount++;
                 String v = node.stringValue("highway");
-                if(!v.isEmpty() && !v.equals("no")) highwayNodeCount++;
+                if (!v.isEmpty() && !v.equals("no")) highwayNodeCount++;
                 v = node.stringValue("entrance");
-                if(!v.isEmpty() && !v.equals("no")) entranceNodeCount++;
+                if (!v.isEmpty() && !v.equals("no")) entranceNodeCount++;
             }
 
             assertEquals(nodeCount, way.nodes().count());
@@ -380,7 +381,7 @@ public class ReferentialIntegrityTest
                 assertTrue(geom instanceof Lineal);
             }
 
-            for(Node node: way.nodes("*"))
+            for (Node node : way.nodes("*"))
             {
                 assertTrue(node.id() > 0);
                 totalFeatureNodeCount++;
@@ -427,7 +428,7 @@ public class ReferentialIntegrityTest
             {
                 Features<Way> parentWays = node.parentWays();
                 Assert.assertTrue(parentWays.contains(way));
-                for(Way parentWay: parentWays)
+                for (Way parentWay : parentWays)
                 {
                     Assert.assertTrue(parentWay.nodes().contains(node));
                     parentWayCount++;
@@ -443,7 +444,7 @@ public class ReferentialIntegrityTest
         }
         long end = System.currentTimeMillis();
         Log.debug("Checked %d ways with %d feature nodes (%d parent ways) in %d ms",
-            sample.size(), nodeCount, parentWayCount, end-start);
+            sample.size(), nodeCount, parentWayCount, end - start);
         Log.debug("ParentWay queries consulted %d ways at node location.", waysAtNodes);
     }
 
@@ -454,11 +455,11 @@ public class ReferentialIntegrityTest
         long parentWayCount = 0;
         Node nodeWithMost = null;
         long mostParentCount = 0;
-        for(Node node: features.nodes())
+        for (Node node : features.nodes())
         {
             nodeCount++;
             long count = node.parentWays().count();
-            if(count > 0)
+            if (count > 0)
             {
                 wayNodeCount++;
                 if (count > mostParentCount)
@@ -480,9 +481,9 @@ public class ReferentialIntegrityTest
         String v = f.stringValue(k);
         assertTrue(v.isEmpty() || v.equals("no"));
         Tags tags = f.tags();
-        while(tags.next())
+        while (tags.next())
         {
-            if(tags.key().equals(k))
+            if (tags.key().equals(k))
             {
                 v = tags.stringValue();
                 assertTrue(v.isEmpty() || v.equals("no"));
@@ -497,20 +498,20 @@ public class ReferentialIntegrityTest
      * - Through the iterator
      * - Converting the tags to a HashMap and looking up each one
      *
-     * All methods of lookup should return the same results.
+     * All methods of lookup must return the same results.
      */
     @Test public void testTags()
     {
         int totalFeatureCount = 0;
         int totalTagCount = 0;
-        for(Feature f: features)
+        for (Feature f : features)
         {
             Tags tags = f.tags();
             int tagCount = 0;
 
-            Map<String,Object> tagMap = tags.toMap();
+            Map<String, Object> tagMap = tags.toMap();
 
-            while(tags.next())
+            while (tags.next())
             {
                 String k = tags.key();
                 String v = tags.stringValue();
@@ -520,7 +521,7 @@ public class ReferentialIntegrityTest
                     Log.debug("%s: %s should be %s, not %s", f, k, v, f.stringValue(k));
                 }
                  */
-                assertTrue(f.hasTag(k,v));
+                assertTrue(f.hasTag(k, v));
                 assertTrue(f.stringValue(k).equals(v));
                 assertTrue(f.hasTag(k));
                 assertTrue(tagMap.containsKey(k));
@@ -540,9 +541,9 @@ public class ReferentialIntegrityTest
     {
         for (Way way : features.ways("w[highway]"))
         {
-            for(Node node: way.nodes(
+            for (Node node : way.nodes(
                 "n[!highway][!railway][!barrier][!entrance][!created_by]" +
-                "[!traffic_sign][!crossing]"))
+                    "[!traffic_sign][!crossing]"))
             {
                 String v = node.stringValue("traffic_sign");
                 assertNotTagged(node, "highway");
@@ -556,5 +557,201 @@ public class ReferentialIntegrityTest
                 // Log.debug("%s: %s", node, node.tags());
             }
         }
+    }
+
+    // delete
+    public void testSuperRelations()
+    {
+        long relCount = 0;
+        long superRelCount = 0;
+        for (Relation rel : features.relations())
+        {
+            if(!rel.memberRelations().isEmpty())
+            {
+                Feature firstMember = rel.memberRelations().first();
+                assertTrue(firstMember instanceof Relation);
+                superRelCount++;
+            }
+            relCount++;
+        }
+        Log.debug("%d relations", relCount);
+        Log.debug("  Of these, %d are super-relations", superRelCount);
+    }
+
+    /**
+     * Tests relation member queries:
+     * - based on primitive type
+     * - based on conceptual type
+     * - iteration
+     * All approaches must yield the same counts.
+     */
+    @Test public void testSimpleMemberQueries()
+    {
+        long relations = 0;
+        long members = 0;
+        long memberNodes = 0;
+        long memberWays = 0;
+        long memberRelations = 0;
+        long memberAreas = 0;
+        long memberWayAreas = 0;
+        long memberRelationAreas = 0;
+        long membersManual = 0;
+        long memberNodesManual = 0;
+        long memberWaysManual = 0;
+        long memberRelationsManual = 0;
+        long memberAreasManual = 0;
+        long memberWayAreasManual = 0;
+        long memberRelationAreasManual = 0;
+
+        for (Relation rel : features.relations())
+        {
+            long thisMemberRelations = rel.memberRelations().count();
+            long thisMemberWays = rel.memberWays().count();
+            members += rel.members().count();
+            memberNodes += rel.memberNodes().count();
+            memberWays += thisMemberWays;
+            memberRelations += thisMemberRelations;
+            memberAreas += rel.members("a").count();
+            memberWayAreas += rel.memberWays("a").count();
+            memberRelationAreas += rel.memberRelations("a").count();
+            assertEquals(thisMemberRelations, rel.memberRelations("ar").count());
+            assertEquals(thisMemberWays, rel.memberWays("wa").count());
+            assertEquals(thisMemberRelations, rel.memberRelations("nar").count());
+            assertEquals(thisMemberWays, rel.memberWays("nwa").count());
+
+            for(Feature f: rel)
+            {
+                switch (f.type())
+                {
+                case NODE:
+                    memberNodesManual++;
+                    break;
+                case WAY:
+                    memberWaysManual++;
+                    if(f.isArea())
+                    {
+                        memberWayAreasManual++;
+                        memberAreasManual++;
+                    }
+                    break;
+                case RELATION:
+                    memberRelationsManual++;
+                    if(f.isArea())
+                    {
+                        memberRelationAreasManual++;
+                        memberAreasManual++;
+                    }
+                    break;
+                }
+                membersManual++;
+            }
+            relations++;
+        }
+        Log.debug("%d relations with %d members", relations, members);
+        Log.debug("  (%d nodes, %d ways, %d relations)", memberNodes, memberWays, memberRelations);
+        assertTrue(relations > 0);
+        assertTrue(members > 0);
+        assertEquals(membersManual, members);
+        assertEquals(memberNodesManual, memberNodes);
+        assertEquals(memberWaysManual, memberWays);
+        assertEquals(memberRelationsManual, memberRelations);
+        assertEquals(memberAreasManual, memberAreas);
+        assertEquals(memberWayAreasManual, memberWayAreas);
+        assertEquals(memberRelationAreasManual, memberRelationAreas);
+    }
+
+
+    public void testMemberQueriesX()
+    {
+        for(int run=0; run<10; run++)
+        {
+            long start = System.currentTimeMillis();
+            long relCount = 0;
+            long memberCount = 0;
+            for (Relation rel : features.relations(/* "a[boundary]" */))
+            {
+                relCount++;
+                for(Node node: rel.memberNodes("n[place]"))
+                {
+                    // Log.debug("%s: %s", rel, node);
+                    memberCount++;
+                }
+            }
+            long end = System.currentTimeMillis();
+            Log.debug("%d nodes in %d relations (%d ms)", memberCount, relCount, end - start);
+        }
+
+        /*
+        for(Relation rel: features.relations("r"))
+        {
+            for(Way way: rel.memberWays("w[highway]"))
+            {
+                Log.debug("%s: %s", rel, way);
+            }
+        }
+         */
+    }
+
+    @Test public void testMemberRoleQueries()
+    {
+        Matcher matcher = new RoleMatcher(features.store(), "admin_centre");
+        for(int run=0; run<10; run++)
+        {
+            long start = System.currentTimeMillis();
+            long relCount = 0;
+            long memberCount = 0;
+            long memberCountSlow = 0;
+            for (Relation rel : features.relations(/* "a[boundary]" */))
+            {
+                relCount++;
+                Iterator<Feature> iter = ((StoredRelation)rel).iterator(
+                    TypeBits.NODES, matcher);
+                while(iter.hasNext())
+                {
+                    iter.next();
+                    memberCount++;
+                }
+
+                for(Node node: rel.memberNodes())
+                {
+                    if(node.role().equals("admin_centre")) memberCountSlow++;
+                }
+            }
+            long end = System.currentTimeMillis();
+            Log.debug("%d nodes in %d relations (%d ms)", memberCount, relCount, end - start);
+            Log.debug("  (%d nodes using slow count)", memberCountSlow);
+        }
+
+        /*
+        for(Relation rel: features.relations("r"))
+        {
+            for(Way way: rel.memberWays("w[highway]"))
+            {
+                Log.debug("%s: %s", rel, way);
+            }
+        }
+         */
+    }
+
+    /*
+    @Test public void testMemberQueries2()
+    {
+        for(Relation rel: features.relations())
+        {
+            for(Node node: rel.memberNodes("n[place]"))
+            {
+                if(!rel.hasTag("boundary"))
+                {
+                    Log.debug("%s: %s", rel, node);
+                }
+            }
+        }
+
+    }
+     */
+
+    @Test public void testPurgatoryMembers()
+    {
+
     }
 }
