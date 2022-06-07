@@ -1,0 +1,409 @@
+name: Germany DE on workstation (parallel)
+
+admin_areas-count-l:
+    queries:     10000
+    features:    141664
+    best-time:   68
+    worst-time:  80
+    avg-time:    74
+    median-time: 75
+
+admin_areas-count-xl:
+    queries:     10000
+    features:    2235719
+    best-time:   447
+    worst-time:  494
+    avg-time:    468
+    median-time: 463
+
+anything-count-s:
+    queries:     100000
+    features:    24309447
+    best-time:   880
+    worst-time:  953
+    avg-time:    911
+    median-time: 889
+
+anything-count-xl:
+    queries:     10000
+    features:    4324316202
+    best-time:   20052
+    worst-time:  20347
+    avg-time:    20175
+    median-time: 20146
+
+anything-count-xs:
+    queries:     100000
+    features:    21862076
+    best-time:   844
+    worst-time:  911
+    avg-time:    863
+    median-time: 856
+
+bakeries-names-l:
+    queries:     10000
+    features:    26507
+    best-time:   75
+    worst-time:  92
+    avg-time:    81
+    median-time: 78
+
+bakeries-names-m:
+    queries:     10000
+    features:    1556
+    best-time:   49
+    worst-time:  62
+    avg-time:    56
+    median-time: 60
+
+canals-count-l:
+    queries:     10000
+    features:    11434
+    best-time:   57
+    worst-time:  71
+    avg-time:    63
+    median-time: 58
+
+canals-measure-m:
+    queries:     10000
+    features:    1103
+    best-time:   48
+    worst-time:  77
+    avg-time:    58
+    median-time: 55
+
+canals-measure-xl:
+    queries:     10000
+    features:    921357
+    best-time:   530
+    worst-time:  578
+    avg-time:    559
+    median-time: 572
+
+castles-names-l:
+    queries:     10000
+    features:    4028
+    best-time:   75
+    worst-time:  217
+    avg-time:    106
+    median-time: 76
+
+coastlines-measure-xl:
+    queries:     10000
+    features:    102134
+    best-time:   415
+    worst-time:  443
+    avg-time:    423
+    median-time: 419
+
+eateries-count-l:
+    queries:     10000
+    features:    144440
+    best-time:   80
+    worst-time:  97
+    avg-time:    87
+    median-time: 85
+
+eateries-count-m:
+    queries:     10000
+    features:    8322
+    best-time:   56
+    worst-time:  76
+    avg-time:    66
+    median-time: 67
+
+eateries-tags-l:
+    queries:     10000
+    features:    144440
+    best-time:   120
+    worst-time:  196
+    avg-time:    142
+    median-time: 137
+
+eateries-tags-m:
+    queries:     10000
+    features:    8322
+    best-time:   58
+    worst-time:  71
+    avg-time:    61
+    median-time: 60
+
+farmyards-count-l:
+    queries:     10000
+    features:    135425
+    best-time:   83
+    worst-time:  99
+    avg-time:    90
+    median-time: 87
+
+farmyards-count-m:
+    queries:     10000
+    features:    8609
+    best-time:   53
+    worst-time:  55
+    avg-time:    53
+    median-time: 54
+
+fire_hydrants-count-m:
+    queries:     10000
+    features:    21499
+    best-time:   49
+    worst-time:  59
+    avg-time:    52
+    median-time: 50
+
+fire_hydrants-count-s:
+    queries:     100000
+    features:    11971
+    best-time:   448
+    worst-time:  511
+    avg-time:    469
+    median-time: 449
+
+highways-count-s:
+    queries:     100000
+    features:    627306
+    best-time:   490
+    worst-time:  580
+    avg-time:    528
+    median-time: 517
+
+highways-count-xs:
+    queries:     100000
+    features:    131860
+    best-time:   460
+    worst-time:  471
+    avg-time:    465
+    median-time: 464
+
+highways-measure-l:
+    queries:     10000
+    features:    9342906
+    best-time:   2438
+    worst-time:  2491
+    avg-time:    2461
+    median-time: 2451
+
+highways-measure-m:
+    queries:     10000
+    features:    580927
+    best-time:   245
+    worst-time:  285
+    avg-time:    259
+    median-time: 258
+
+hotels-names-l:
+    queries:     10000
+    features:    26882
+    best-time:   76
+    worst-time:  90
+    avg-time:    82
+    median-time: 79
+
+hotels-names-m:
+    queries:     10000
+    features:    1639
+    best-time:   49
+    worst-time:  61
+    avg-time:    56
+    median-time: 58
+
+hotels-names-s:
+    queries:     100000
+    features:    991
+    best-time:   451
+    worst-time:  542
+    avg-time:    475
+    median-time: 461
+
+libraries-names-l:
+    queries:     10000
+    features:    3641
+    best-time:   79
+    worst-time:  96
+    avg-time:    83
+    median-time: 81
+
+libraries-names-m:
+    queries:     10000
+    features:    190
+    best-time:   55
+    worst-time:  70
+    avg-time:    60
+    median-time: 56
+
+lighthouses-count-xl:
+    queries:     10000
+    features:    18138
+    best-time:   783
+    worst-time:  882
+    avg-time:    829
+    median-time: 827
+
+lighthouses-tags-xl:
+    queries:     10000
+    features:    18138
+    best-time:   797
+    worst-time:  834
+    avg-time:    811
+    median-time: 804
+
+motorways-measure-l:
+    queries:     10000
+    features:    51736
+    best-time:   148
+    worst-time:  161
+    avg-time:    153
+    median-time: 148
+
+motorways-measure-m:
+    queries:     10000
+    features:    3400
+    best-time:   62
+    worst-time:  74
+    avg-time:    70
+    median-time: 72
+
+motorways-measure-xl:
+    queries:     10000
+    features:    4193297
+    best-time:   2614
+    worst-time:  2701
+    avg-time:    2660
+    median-time: 2676
+
+named_parks-names-l:
+    queries:     10000
+    features:    9205
+    best-time:   74
+    worst-time:  87
+    avg-time:    79
+    median-time: 75
+
+named_parks-names-xl:
+    queries:     10000
+    features:    775543
+    best-time:   514
+    worst-time:  549
+    avg-time:    524
+    median-time: 518
+
+nodes-count-s:
+    queries:     100000
+    features:    373133
+    best-time:   464
+    worst-time:  566
+    avg-time:    507
+    median-time: 484
+
+nodes-count-xl:
+    queries:     10000
+    features:    874968769
+    best-time:   3930
+    worst-time:  4036
+    avg-time:    4000
+    median-time: 4024
+
+nodes-count-xs:
+    queries:     100000
+    features:    7916
+    best-time:   464
+    worst-time:  539
+    avg-time:    490
+    median-time: 471
+
+nodes-tags-xl:
+    queries:     10000
+    features:    874968769
+    best-time:   45724
+    worst-time:  54110
+    avg-time:    50318
+    median-time: 50091
+
+places-count-xl:
+    queries:     10000
+    features:    11329964
+    best-time:   871
+    worst-time:  987
+    avg-time:    903
+    median-time: 885
+
+post_boxes-count-m:
+    queries:     10000
+    features:    2934
+    best-time:   47
+    worst-time:  59
+    avg-time:    53
+    median-time: 55
+
+pubs-names-m:
+    queries:     10000
+    features:    753
+    best-time:   56
+    worst-time:  66
+    avg-time:    62
+    median-time: 64
+
+pubs-names-s:
+    queries:     100000
+    features:    481
+    best-time:   501
+    worst-time:  603
+    avg-time:    525
+    median-time: 511
+
+railways-measure-l:
+    queries:     10000
+    features:    254642
+    best-time:   142
+    worst-time:  157
+    avg-time:    148
+    median-time: 144
+
+railways-measure-xl:
+    queries:     10000
+    features:    20946189
+    best-time:   5481
+    worst-time:  5635
+    avg-time:    5544
+    median-time: 5534
+
+restaurants-count-l:
+    queries:     10000
+    features:    1435
+    best-time:   80
+    worst-time:  319
+    avg-time:    136
+    median-time: 93
+
+restaurants-count-m:
+    queries:     10000
+    features:    79
+    best-time:   54
+    worst-time:  64
+    avg-time:    56
+    median-time: 55
+
+soccer_fields-count-l:
+    queries:     10000
+    features:    38734
+    best-time:   71
+    worst-time:  94
+    avg-time:    78
+    median-time: 73
+
+woods-count-l:
+    queries:     10000
+    features:    153260
+    best-time:   74
+    worst-time:  88
+    avg-time:    82
+    median-time: 85
+
+woods-count-xl:
+    queries:     10000
+    features:    11489003
+    best-time:   567
+    worst-time:  575
+    avg-time:    571
+    median-time: 573

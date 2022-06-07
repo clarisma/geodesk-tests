@@ -35,9 +35,22 @@ public class ReferentialIntegrityTest
     public void setUp()
     {
         // features = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        // features = new FeatureLibrary("/home/md/geodesk/tests/de.gol");
+        /*
         features = new FeatureLibrary("c:\\geodesk\\empty.store",
             "file:///c:\\geodesk\\tests\\de-tiles");
+         */
+        /*
+        features = new FeatureLibrary("/home/md/geodesk/tests/test.gol",
+            "file:///home/md/geodesk/tests/world-tiles");
+         */
+        features = new FeatureLibrary("/home/md/geodesk/tests/test2.gol",
+            "file:///home/md/geodesk/tests/ch-tiles");
 
+        /*
+        boxes = new BoxMaker(
+            Box.ofWSEN(7.6872276841, 47.707433547, 12.6844378887, 53.8412264446));
+         */
         boxes = new BoxMaker(
             Box.ofWSEN(7.6872276841, 47.707433547, 12.6844378887, 53.8412264446));
     }
