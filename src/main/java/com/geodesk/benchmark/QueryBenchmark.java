@@ -181,7 +181,7 @@ public class QueryBenchmark
         {
             for(int i=boxStartIndex; i<boxEndIndex; i++)
             {
-                perform(features.features(queryString).in(boxes[i]));
+                perform(features.select(queryString).in(boxes[i]));
             }
             // return result;
             return (double)count;
@@ -509,8 +509,8 @@ public class QueryBenchmark
 
     public static void main(String[] args) throws Exception
     {
-        // new QueryBenchmark().perform("c:\\geodesk\\benchmarks", "C:\\geodesk\\tests\\de.gol", "germany");
-        new QueryBenchmark().perform("../benchmarks", "world.gol", "germany");
+        new QueryBenchmark().perform("c:\\geodesk\\benchmarks", "C:\\geodesk\\tests\\de.gol", "germany");
+        // new QueryBenchmark().perform("../benchmarks", "world.gol", "germany");
         // new QueryBenchmark().perform("/home/md/geodesk/benchmarks", "/home/md/geodesk/tests/de4.gol", "germany");
     }
 }

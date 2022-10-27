@@ -166,7 +166,7 @@ public class RandomFeatures
         Log.debug("Query %s:", query);
         Box bbox = makeRandomBox(f.bounds());
 
-        for(Feature candidate: features.features(query).in(bbox))
+        for(Feature candidate: features.select(query).in(bbox))
         {
             if(candidate.equals(f)) return;
         }
@@ -214,7 +214,7 @@ public class RandomFeatures
 
     public static void main(String[] args)
     {
-        FeatureLibrary features = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        FeatureLibrary features = new FeatureLibrary(TestSettings.golFile());
         RandomFeatures test = new RandomFeatures(features);
         test.test();
     }

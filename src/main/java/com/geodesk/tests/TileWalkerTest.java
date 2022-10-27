@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
-import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 import org.locationtech.jts.geom.prep.PreparedPolygon;
 
 public class TileWalkerTest
@@ -20,7 +19,7 @@ public class TileWalkerTest
     {
         FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de3.gol");
         Feature bavaria = world
-            .features("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
+            .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
             .first();
         Geometry bavariaPoly = bavaria.toGeometry();

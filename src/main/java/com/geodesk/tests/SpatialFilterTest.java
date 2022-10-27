@@ -29,7 +29,7 @@ public class SpatialFilterTest
         long start = System.currentTimeMillis();
         FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
         Feature bavaria = world
-            .features("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
+            .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
             .first();
         Geometry bavariaPoly = bavaria.toGeometry();
@@ -42,7 +42,7 @@ public class SpatialFilterTest
             .features("n[place=city], n[place=town][population > 25000]");
          */
         Features<?> places = world
-            .features("a[leisure=pitch][sport=soccer]");
+            .select("a[leisure=pitch][sport=soccer]");
         int count = 0;
 
         Set<Feature> found = new HashSet<>();
@@ -95,7 +95,7 @@ public class SpatialFilterTest
         long start = System.currentTimeMillis();
         FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
         Feature bavaria = world
-            .features("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
+            .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
             .first();
         Geometry bavariaPoly = bavaria.toGeometry();
@@ -104,7 +104,7 @@ public class SpatialFilterTest
         for (int i = 0; i < 10; i++)
         {
             long startQuery = System.currentTimeMillis();
-            Features<?> places = world.features("a[building]");
+            Features<?> places = world.select("a[building]");
             long count = 0; // places.in(Box.of(bavariaPoly)).count();
 
             for (Feature place : places.in(Box.of(bavariaPoly)))
@@ -127,7 +127,7 @@ public class SpatialFilterTest
         long start = System.currentTimeMillis();
         FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
         Feature bavaria = world
-            .features("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
+            .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
             .first();
         Geometry bavariaPoly = bavaria.toGeometry();
@@ -138,7 +138,7 @@ public class SpatialFilterTest
             try
             {
                 long startQuery = System.currentTimeMillis();
-                Features<?> places = world.features("a[building]");
+                Features<?> places = world.select("a[building]");
                 long count = 0; // places.in(Box.of(bavariaPoly)).count();
 
                 for (Feature place : places.select(Filters.within(bavariaPrepared)))
@@ -163,7 +163,7 @@ public class SpatialFilterTest
         long start = System.currentTimeMillis();
         FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
         Feature bavaria = world
-            .features("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
+            .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
             .first();
         //Geometry bavariaPoly = bavaria.toGeometry();
@@ -172,7 +172,7 @@ public class SpatialFilterTest
         for (int i = 0; i < 10; i++)
         {
             long startQuery = System.currentTimeMillis();
-            Features<?> places = world.features("a[building]");
+            Features<?> places = world.select("a[building]");
             long count = places.in(bavaria.bounds()).count();
 
             long end = System.currentTimeMillis();
@@ -193,7 +193,7 @@ public class SpatialFilterTest
         long start = System.currentTimeMillis();
         FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
         Feature germany = world
-            .features("a[boundary=administrative][admin_level=2][name:en=Germany]")
+            .select("a[boundary=administrative][admin_level=2][name:en=Germany]")
             .in(Box.atLonLat(12.0231, 48.3310))
             .first();
         Log.debug("Fetching country geometry...");
@@ -205,7 +205,7 @@ public class SpatialFilterTest
         for (int i = 0; i < 1; i++)
         {
             long startQuery = System.currentTimeMillis();
-            Features<?> states = world.features("a[boundary=administrative][admin_level=4][name]");
+            Features<?> states = world.select("a[boundary=administrative][admin_level=4][name]");
 
             List<State> stateList = new ArrayList<>();
 
@@ -226,7 +226,7 @@ public class SpatialFilterTest
                 stateList.size(), end - startQuery, end - start);
 
             startQuery = System.currentTimeMillis();
-            Features<?> counties = world.features("a[boundary=administrative][admin_level=6][name]");
+            Features<?> counties = world.select("a[boundary=administrative][admin_level=6][name]");
             int countyCount = 0;
             Set<Feature> countySet = new HashSet<>();
             List<Geometry> countyGeometries = new ArrayList<>();
@@ -266,7 +266,7 @@ public class SpatialFilterTest
             countyCount = 0;
             for (State s : stateList)
             {
-                counties = world.features("a[boundary=administrative][admin_level=6][name]");
+                counties = world.select("a[boundary=administrative][admin_level=6][name]");
                 for (Feature county : counties.in(Box.of(s.geom)))
                 {
                     Geometry countyGeom = county.toGeometry();
@@ -299,12 +299,12 @@ public class SpatialFilterTest
             Feature cityWithMostBuildings = null;
             long mostBuildings = 0;
             for (Feature city : world
-                .features("a[boundary=administrative][admin_level=8][name]"))
+                .select("a[boundary=administrative][admin_level=8][name]"))
             {
                 // Log.debug("- %s", city.stringValue("name"));
                 cityCount++;
                 long cityBuildingCount = world
-                    .features("a[building]")
+                    .select("a[building]")
                     .select(Filters.within(city))
                     .count();
                 if(cityBuildingCount > mostBuildings)
@@ -335,12 +335,12 @@ public class SpatialFilterTest
             Feature cityWithMostChurches = null;
             long mostChurches = 0;
             for (Feature city : world
-                .features("a[boundary=administrative][admin_level=8][name]"))
+                .select("a[boundary=administrative][admin_level=8][name]"))
             {
                 // Log.debug("- %s", city.stringValue("name"));
                 cityCount++;
                 long cityChurchCount = world
-                    .features("na[amenity=place_of_worship][religion=christian]")
+                    .select("na[amenity=place_of_worship][religion=christian]")
                     .select(Filters.within(city))
                     .count();
                 if(cityChurchCount > mostChurches)
@@ -370,12 +370,12 @@ public class SpatialFilterTest
             Feature cityWithMostChurches = null;
             long mostChurches = 0;
             for (Feature city : world
-                .features("a[boundary=administrative][admin_level=8][name]"))
+                .select("a[boundary=administrative][admin_level=8][name]"))
             {
                 // Log.debug("- %s", city.stringValue("name"));
                 cityCount++;
                 long cityChurchCount = world
-                    .features("na[amenity=place_of_worship][religion=christian]")
+                    .select("na[amenity=place_of_worship][religion=christian]")
                     .in(city.bounds())
                     .count();
                 if(cityChurchCount > mostChurches)

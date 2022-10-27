@@ -26,7 +26,7 @@ public class WithinTest
         Point pt = geomBuilder.createPointFromLonLat(lon, lat);
 
         Features<?> areas = world
-            .features("a")
+            .select("a")
             .in(Box.atLonLat(lon, lat));
 
         for(int i=0; i<10; i++)
@@ -70,7 +70,7 @@ public class WithinTest
         Point pt = geomBuilder.createPointFromLonLat(lon, lat);
 
         Features<?> areas = world
-            .features("a")
+            .select("a")
             .in(Box.atLonLat(lon, lat));
 
         for(int i=0; i<10; i++)

@@ -2,7 +2,6 @@ package com.geodesk.feature.store;
 
 import com.geodesk.benchmark.RandomBoxes;
 import com.geodesk.feature.FeatureId;
-import com.geodesk.core.MercatorToWSG84;
 import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
@@ -41,7 +40,7 @@ public class QueryDiscrepancyTest
     private void testNoDuplicates(Features<?> store, String query, Bounds bbox)
     {
         MutableLongSet ids = new LongHashSet();
-        for(Feature f: store.features(query).in(bbox))
+        for(Feature f: store.select(query).in(bbox))
         {
             if(!ids.add(FeatureId.of(f.type(), f.id())))
             {
@@ -66,7 +65,7 @@ public class QueryDiscrepancyTest
     private LongObjectMap<Feature> getFeatures(Features<?> store, String query, Bounds bbox)
     {
         MutableLongObjectMap<Feature> features = new LongObjectHashMap<>();
-        for(Feature f: store.features(query).in(bbox))
+        for(Feature f: store.select(query).in(bbox))
         {
             features.put(FeatureId.of(f.type(), f.id()), f);
         }

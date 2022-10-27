@@ -34,18 +34,8 @@ public class ReferentialIntegrityTest
     @Before
     public void setUp()
     {
-        // features = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
-        // features = new FeatureLibrary("/home/md/geodesk/tests/de.gol");
-        /*
-        features = new FeatureLibrary("c:\\geodesk\\empty.store",
-            "file:///c:\\geodesk\\tests\\de-tiles");
-         */
-        /*
-        features = new FeatureLibrary("/home/md/geodesk/tests/test.gol",
-            "file:///home/md/geodesk/tests/world-tiles");
-         */
-        features = new FeatureLibrary("/home/md/geodesk/tests/test2.gol",
-            "file:///home/md/geodesk/tests/ch-tiles");
+        features = new FeatureLibrary(TestSettings.golFile(), TestSettings.tileURL());
+
 
         /*
         boxes = new BoxMaker(
@@ -98,7 +88,7 @@ public class ReferentialIntegrityTest
         Set<Feature> set1 = new HashSet<>();
         Set<Feature> set2 = new HashSet<>();
 
-        for (Feature f : features.features("ra"))
+        for (Feature f : features.select("ra"))
         {
             if (f instanceof Relation) set1.add(f);
         }
@@ -226,34 +216,34 @@ public class ReferentialIntegrityTest
         assertEquals(nodes, features.nodes().count());
         assertEquals(allWays, features.ways().count());
         assertEquals(allRelations, features.relations().count());
-        assertEquals(areas, features.features("a").count());
-        assertEquals(allHighways, features.features("*[highway]").count());
-        assertEquals(linealHighways, features.features("w[highway]").count());
+        assertEquals(areas, features.select("a").count());
+        assertEquals(allHighways, features.select("*[highway]").count());
+        assertEquals(linealHighways, features.select("w[highway]").count());
         assertEquals(linealHighways, features.ways("w[highway]").count());
         assertEquals(linealRailways, features.ways("w[railway]").count());
-        assertEquals(linealRailwayHighways, features.features("w[railway][highway]").count());
-        assertEquals(linealRailwayHighways, features.features("w[railway]")
+        assertEquals(linealRailwayHighways, features.select("w[railway][highway]").count());
+        assertEquals(linealRailwayHighways, features.select("w[railway]")
             .ways("*[highway]").count());
-        assertEquals(linealRailwayHighways, features.features("w[highway]")
+        assertEquals(linealRailwayHighways, features.select("w[highway]")
             .ways("*[railway]").count());
 
         WorldView<?> linealWaysQuery = (WorldView<?>) features.ways()
-            .features("wa[highway]")
+            .select("wa[highway]")
             .ways("*[railway][highway]")
-            .features("w");
+            .select("w");
         assertEquals(TypeBits.NONAREA_WAYS, linealWaysQuery.types());
 
         assertEquals(linealRailwayHighways, features.ways()
-            .features("wa[highway]")
+            .select("wa[highway]")
             .ways("*[railway][highway]")
-            .features("*[railway]")
-            .features("w")
+            .select("*[railway]")
+            .select("w")
             .count());
 
         Features<?> empty = features.ways()
-            .features("wa[highway]")
+            .select("wa[highway]")
             .ways("*[railway][highway]")
-            .features("*[railway]")
+            .select("*[railway]")
             .nodes();
         assertTrue(empty instanceof EmptyView<?>);
     }
@@ -275,10 +265,10 @@ public class ReferentialIntegrityTest
 
     void testContainsQueries(Features<?> features, Set<Feature> others)
     {
-        testContains(features.features("a[landuse]"), others);
+        testContains(features.select("a[landuse]"), others);
         testContains(features
                 .nodes("na[shop]")
-                .features("*[opening_hours]"),
+                .select("*[opening_hours]"),
             others);
     }
 
@@ -338,10 +328,13 @@ public class ReferentialIntegrityTest
     /**
      * This Test checks the following:
      *
-     * - A way's bounding box must be the tightest bbox that includes all of its nodes - If a way is an area, its first
-     * and last node must be the same - An area must have at least 4 nodes; all others at least 2 - Coordinates of the
-     * way must match the nodes - Geometry of an area must be polygonal - Geometry of non-area must be lineal - Nodes
-     * obtained via filters must match the results of checking nodes "manually"
+     * - A way's bounding box must be the tightest bbox that includes all of its nodes
+     * - If a way is an area, its first and last node must be the same
+     * - An area must have at least 4 nodes; all others at least 2
+     * - Coordinates of the way must match the nodes
+     * - Geometry of an area must be polygonal
+     * - Geometry of non-area must be lineal
+     * - Nodes obtained via filters must match the results of checking nodes "manually"
      */
     @Test public void testWays()
     {
