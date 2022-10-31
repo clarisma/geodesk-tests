@@ -156,15 +156,26 @@ public class ReferentialIntegrityTest
         {
             relCount++;
 
+            if(rel.id() == 9884579)
+            {
+                Log.error("!!!");
+            }
+
             // Box memberBounds = new Box();
 
             for (Feature member : rel.members())
             {
+                if(rel.id() == 9884579) Log.debug("- %s", member);
                 memberCount++;
 
                 // Check referential integrity relation <---> member
                 assertTrue(member.belongsToRelation());
-                assertTrue(member.belongsTo(rel));
+                if(!member.belongsTo(rel))
+                {
+                    Assert.fail(String.format(
+                        "Feature.belongsTo() false, but %s belongs to %s", member, rel));
+                }
+                // assertTrue(member.belongsTo(rel));
                 assertTrue(member.parentRelations().contains(rel));
                 uniqueRoles.add(member.role());
             }
@@ -454,6 +465,8 @@ public class ReferentialIntegrityTest
         Log.debug("ParentWay queries consulted %d ways at node location.", waysAtNodes);
     }
 
+
+    /*
     @Test public void testNodes()
     {
         long nodeCount = 0;
@@ -480,7 +493,7 @@ public class ReferentialIntegrityTest
             nodeCount, wayNodeCount, parentWayCount);
         Log.debug("%s has %d parent ways", nodeWithMost, mostParentCount);
     }
-
+    */
 
     private void assertNotTagged(Feature f, String k)
     {

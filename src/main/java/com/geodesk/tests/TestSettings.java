@@ -4,7 +4,7 @@ public class TestSettings
 {
     public static String golFile()
     {
-        return "c:\\geodesk\\tests\\s8.gol";
+        return "/home/md/geodesk/tests/w3.gol";
     }
     public static String tileURL() { return null; }
 }
