@@ -7,11 +7,19 @@
 
 package com.geodesk.tests;
 
+import java.nio.file.Path;
+
 public class TestSettings
 {
     public static String golFile()
     {
-        return "/home/md/geodesk/tests/w3.gol";
+        // return "/home/md/geodesk/tests/w3.gol";
+        return "c:\\geodesk\\tests\\germany.gol";
     }
     public static String tileURL() { return null; }
+
+    public static Path outputPath()
+    {
+        return Path.of("c:\\geodesk\\debug\\");
+    }
 }
