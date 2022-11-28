@@ -12,6 +12,12 @@ boxes:
     l:       10000,     2500, 10000
     xl:      1000,     10000, 100000
 
+polygons:
+    country:    a[boundary=administrative][admin_level=2][name]
+    state:      a[boundary=administrative][admin_level=4][name]
+    county:     a[boundary=administrative][admin_level=8][name]
+    city:       a[boundary=administrative][admin_level=8][name]
+
 script2:
     pubs-names-s
     canals-count-s

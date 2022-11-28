@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package com.geodesk.benchmark;
+package com.geodesk.benchmark_old;
 
 import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;

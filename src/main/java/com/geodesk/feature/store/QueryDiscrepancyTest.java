@@ -7,7 +7,7 @@
 
 package com.geodesk.feature.store;
 
-import com.geodesk.benchmark.RandomBoxes;
+import com.geodesk.benchmark_old.RandomBoxes;
 import com.geodesk.feature.FeatureId;
 import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;

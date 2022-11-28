@@ -148,7 +148,7 @@ public class SpatialFilterTest
                 Features<?> places = world.select("a[building]");
                 long count = 0; // places.in(Box.of(bavariaPoly)).count();
 
-                for (Feature place : places.select(Filters.within(bavariaPrepared)))
+                for (Feature place : places.select(Filters.slowWithin(bavariaPrepared)))
                 {
                     count++;
                 }
@@ -312,7 +312,7 @@ public class SpatialFilterTest
                 cityCount++;
                 long cityBuildingCount = world
                     .select("a[building]")
-                    .select(Filters.within(city))
+                    .select(Filters.slowWithin(city))
                     .count();
                 if(cityBuildingCount > mostBuildings)
                 {
@@ -348,7 +348,7 @@ public class SpatialFilterTest
                 cityCount++;
                 long cityChurchCount = world
                     .select("na[amenity=place_of_worship][religion=christian]")
-                    .select(Filters.within(city))
+                    .select(Filters.slowWithin(city))
                     .count();
                 if(cityChurchCount > mostChurches)
                 {

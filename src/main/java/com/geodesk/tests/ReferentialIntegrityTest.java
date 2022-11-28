@@ -448,7 +448,7 @@ public class ReferentialIntegrityTest
         long start = System.currentTimeMillis();
         for (Way way : sample)
         {
-            for (Node node : way.nodes("n"))
+            for (Node node : way.nodes())
             {
                 Features<Way> parentWays = node.parentWays();
                 Assert.assertTrue(parentWays.contains(way));

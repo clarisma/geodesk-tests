@@ -1,0 +1,122 @@
+// <seed-query>, <number of boxes>, <minimum extent (meters)>, <maximum extent (meters)>
+
+boxes:
+    urban-xs:      towns,   100000,     10, 100
+    urban-s:       towns,   100000,     250, 500
+    urban-m:       towns,   10000,     500, 2500
+    urban-l:       towns,   10000,     2500, 10000
+    urban-xl:      towns,   1000,     10000, 100000
+    rural-xs:      hamlets, 100000,     10, 100
+    rural-s:       hamlets, 100000,     250, 500
+    rural-m:       hamlets, 10000,     500, 2500
+    rural-l:       hamlets, 10000,     2500, 10000
+    rural-xl:      hamlets, 1000,     10000, 100000
+
+circles:
+    urban:    towns, 10000, 0,0
+    urban-s:  towns, 10000, 250,250
+    urban-m:  towns, 10000, 1000,1000
+    urban-l:  towns, 10000, 5000,5000
+
+polygons:
+    country:    a[boundary=administrative][admin_level=2][name:en=Germany]
+    state:      a[boundary=administrative][admin_level=4][name]
+    county:     a[boundary=administrative][admin_level=6][name]
+    city:       a[boundary=administrative][admin_level=8][name]
+
+benchmarks-x:
+    buildings-count-within-state
+    buildings-count-intersects-state
+    buildings-count-within-country
+    buildings-count-intersects-country
+
+benchmarks:
+    areas-count-enclosing-urban
+    buildings-count-intersects-country
+    highways-count-intersects-country
+    any_restaurant-count-intersects-country
+    buildings-count-within-state
+    libraries-count-within-city
+    pubs-name-bbox-urban-s
+    pubs-name-bbox-urban-m
+    canals-count-bbox-urban-l
+    canals-length-bbox-rural-m
+    canals-length-bbox-rural-xl
+    castles-name-bbox-urban-l
+    post_boxes-count-bbox-urban-m
+    woods-count-bbox-rural-l
+    woods-count-bbox-rural-xl
+    libraries-name-bbox-urban-m
+    libraries-name-bbox-urban-l
+    railways-length-bbox-urban-l
+    railways-length-bbox-urban-xl
+    anything-count-bbox-urban-xs
+    anything-count-bbox-urban-s
+    anything-count-bbox-urban-xl
+    coastlines-length-bbox-urban-xl
+    farmyards-count-bbox-rural-m
+    farmyards-count-bbox-rural-l
+    lighthouses-count-bbox-urban-xl
+    lighthouses-tags-bbox-urban-xl
+    places-count-bbox-urban-xl
+    nodes-count-bbox-urban-xs
+    nodes-count-bbox-urban-s
+    nodes-count-bbox-urban-xl
+    nodes-tags-bbox-urban-xl
+    bakeries-name-bbox-urban-m
+    bakeries-name-bbox-urban-l
+    hotels-name-bbox-urban-s
+    hotels-name-bbox-urban-m
+    hotels-name-bbox-urban-l
+    named_parks-name-bbox-urban-l
+    named_parks-name-bbox-urban-xl
+    fire_hydrants-count-bbox-urban-s
+    fire_hydrants-count-bbox-urban-m
+    motorways-length-bbox-urban-m
+    motorways-length-bbox-urban-l
+    motorways-length-bbox-urban-xl
+    restaurants-count-bbox-urban-m
+    restaurants-count-bbox-urban-l
+    highways-count-bbox-urban-xs
+    highways-count-bbox-urban-s
+    highways-length-bbox-urban-m
+    highways-length-bbox-urban-l
+    soccer_fields-count-bbox-urban-l
+    admin_areas-count-bbox-urban-l
+    admin_areas-count-bbox-urban-xl
+    eateries-count-bbox-urban-m
+    eateries-count-bbox-urban-l
+    eateries-tags-bbox-urban-m
+    eateries-tags-bbox-urban-l
+
+
+queries:
+    admin_areas:    a[boundary=administrative]
+    anything:       *
+    any_restaurant: na[amenity=restaurant]
+    areas:          a
+    bakeries:       na[shop=bakery]
+    bike_routes:    r[type=route][route=bicycle]
+    buildings:      a[building]
+    canals:         w[waterway=canal]
+    castles:        na[historic=castle]
+    coastlines:     w[natural=coastline]
+    eateries:       na[amenity=restaurant,cafe,fast_food,biergarten,bar,pub,ice_cream]
+    farmyards:      a[landuse=farmyard]
+    fire_hydrants:  n[emergency=fire_hydrant]
+    highways:       wa[highway]
+    hotels:         na[tourism=hotel,guest_house]
+    libraries:      na[amenity=library]
+    lighthouses:    na[man_made=lighthouse]
+    motorways:      w[highway=motorway]
+    named_parks:    a[leisure=park][name]
+    nodes:          n
+    places:         na[place]
+    post_boxes:     n[amenity=post_box]
+    pubs:           na[amenity=pub]
+    railways:       w[railway]
+    restaurants:    na[amenity=restaurant][cuisine=italian][website][phone][opening_hours]
+    soccer_fields:  a[leisure=pitch][sport=soccer]
+    towns:          n[place=city],n[place=town][population>20000]
+    hamlets:        n[place=isolated_dwelling,hamlet]
+    woods:          a[natural=wood]

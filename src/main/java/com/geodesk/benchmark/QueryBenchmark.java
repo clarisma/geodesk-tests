@@ -7,517 +7,257 @@
 
 package com.geodesk.benchmark;
 
-import com.clarisma.common.fab.FabReader;
 import com.clarisma.common.util.Log;
-import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
 import com.geodesk.feature.Tags;
-import com.geodesk.feature.Way;
-import com.geodesk.core.Box;
-import com.geodesk.geom.Bounds;
 
-import org.eclipse.collections.api.list.primitive.MutableLongList;
-import org.eclipse.collections.impl.factory.primitive.LongLists;
-import org.locationtech.jts.util.Stopwatch;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.reflect.Constructor;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.function.BiConsumer;
 
 /**
- * A benchmark suite for queries. We mostly check the performance of bounding-box
- * queries (as a baseline), but there are also options to measure features and
- * obtain their tags.
+ * A Benchmark that measures the performance of a batch of feature queries.
+ * Each item in the batch is a *context*, which can represent a bounding box,
+ * a polygon, etc. depending on the implementation details of the subclass.
  *
+ * @param <T> the context type: Box, Polygon, etc.
  */
-public class QueryBenchmark
+public abstract class QueryBenchmark<T> extends Benchmark
 {
-    private static Map<String,Class<?>> taskClasses = new HashMap<>();
+    /**
+     * The features against which this benchmark will be applied.
+     * This can be the library as a whole, or a selected set.
+     */
+    protected final Features<?> features;
+    /**
+     * The list of contexts, one for each query that will be executed by this benchmark.
+     */
+    private final List<T> contexts;
+    /**
+     * The action that is performed on each query result: obtain its tags, measure it,
+     * iterate its members, etc., or simply count it.
+     */
+    protected final Action action;
+    /**
+     * The total number of features all queries selected (per run)
+     */
+    private long count;
+    /**
+     * The result (per run) of the queries -- varies by action, e.g. average length, etc.
+     * We store this data to ensure that the JVM does not eliminate parts of the
+     * benchmark code as "dead code".
+     */
+    private double result;
+    private final ExecutorService executor;
+    private final List<Task> tasks;
 
-    static
+    public QueryBenchmark(String name, Features<?> features, List<T> contexts,
+        Action action, ExecutorService executor)
     {
-        taskClasses.put("count", CountTask.class);
-        taskClasses.put("names", NameTask.class);
-        taskClasses.put("measure", MeasureTask.class);
-        taskClasses.put("tags", TagsTask.class);
+        super(name);
+        this.features = features;
+        this.contexts = contexts;
+        this.action = action;
+        this.executor = executor;
+        if(executor != null)
+        {
+            tasks = createBatches(Runtime.getRuntime().availableProcessors() * 4);
+        }
+        else
+        {
+            tasks = null;
+        }
     }
 
-    private Path outputPath;
-    private Features<?> features;
-    private Map<String,Bounds> areas = new HashMap<>();
-    private Map<String,BoxSpecs> boxSpecs = new HashMap<>();
-    private Map<String,String> queryStrings = new HashMap<>();
-    // private Map<String,String> querySpecs = new HashMap<>();
-    private Set<String> querySpecs = new HashSet<>();
-    private ExecutorService executor = Executors.newFixedThreadPool(5); // TODO
+    abstract void performSingle(T shape, Result res);
 
-    private static class Benchmark
+    protected void performBatch(List<T> batch, Result res)
     {
-        String name;
-        int queries;
-        long totalFeatures;
-        MutableLongList times = LongLists.mutable.empty();
+        for(T s: batch) performSingle(s, res);
     }
 
-
-    private static class BoxSpecs
+    public static boolean withinTolerance(double v1, double v2)
     {
-        int count;
-        int minMeters;
-        int maxMeters;
+        double delta = Math.abs(v1 - v2);
+        if(delta < 0.000001) return true;
+        return (delta < Math.max(Math.abs(v1), Math.abs(v2)) * 0.00001);
     }
 
-    private class BenchmarkSpecReader extends FabReader
+    @Override protected void perform()
     {
-        BiConsumer<String,String> kvConsumer;
-
-        void areas(String k, String v)
+        if(executor == null)
         {
-            String[] lonLat = v.split("[,\\s]\\s*");
-            areas.put(k, Box.ofWSEN(
-                Double.parseDouble(lonLat[0]),
-                Double.parseDouble(lonLat[1]),
-                Double.parseDouble(lonLat[2]),
-                Double.parseDouble(lonLat[3])));
+            performSequential();
         }
-
-        void boxes(String k, String v)
+        else
         {
-            String[] va = v.split("[,\\s]\\s*");
-            BoxSpecs b = new BoxSpecs();
-            b.count = Integer.parseInt(va[0]);
-            b.minMeters = Integer.parseInt(va[1]);
-            b.maxMeters = Integer.parseInt(va[2]);
-            boxSpecs.put(k, b);
+            performParallel();
         }
+    }
 
-        /*
-        void script(String k, String v)
+    private void performSequential()
+    {
+        Result res = new Result();
+        performBatch(contexts, res);
+        setResult(res);
+    }
+
+    private void setResult(Result res)
+    {
+        if(runsPerformed() == 0)
         {
-            // querySpecs.put(k,v);
+            count = res.count;
+            result = res.result;
         }
-         */
-
-        void queries(String k, String v)
+        else if(res.count != count || !withinTolerance(res.result, result))
         {
-            queryStrings.put(k,v);
-        }
-
-        @Override protected void beginKey(String key)
-        {
-            switch(key)
+            if(res.count != count)
             {
-            case "areas":
-                kvConsumer = this::areas;
-                break;
-            case "boxes":
-                kvConsumer = this::boxes;
-                break;
-            case "queries":
-                kvConsumer = this::queries;
-                break;
-            default:
-                Log.warn("Skipping unknown section: %s", key);
+                throw new RuntimeException(String.format(
+                    "%s: Count differs from previous runs " +
+                        "(%d now vs. %d then)", name(),
+                    res.count, count));
+            }
+            throw new RuntimeException(String.format(
+                "%s: Result differs from previous runs " +
+                    "(%f now vs. %f then)", name(),
+                res.result, result));
+        }
+    }
+
+    private List<Task> createBatches(int batchCount)
+    {
+        List<Task> tasks = new ArrayList<>();
+        int totalContexts = contexts.size();
+        int perBatch = totalContexts / batchCount;
+        int leftover = totalContexts - perBatch * batchCount;
+        int start = 0;
+        int end = start + perBatch + leftover;
+        while(start < totalContexts)
+        {
+            tasks.add(new Task(start, end-1));
+            start = end;
+            end += perBatch;
+        }
+        return tasks;
+    }
+
+    private void performParallel()
+    {
+        Result res = new Result();
+        try
+        {
+            for (Future<Result> future : executor.invokeAll(tasks))
+            {
+                Result r = future.get();;
+                res.count += r.count;
+                res.result += r.result;
             }
         }
-
-        protected void keyValue(String key, String value)
+        catch(Exception ex)
         {
-            if(key.equals("script"))
-            {
-                for(String s: value.split("[,\\s]\\s*"))
-                {
-                    querySpecs.add(s);
-                }
-                return;
-            }
-            if(kvConsumer != null) kvConsumer.accept(key, value);
+            throw new RuntimeException(ex);
         }
-
-        protected void endKey()
-        {
-            kvConsumer = null;
-        }
+        res.result /= tasks.size();
+        setResult(res);
     }
 
-    public void readSpecs(Path path) throws IOException
+    @Override protected void reportDetails(Appendable out) throws IOException
     {
-        new BenchmarkSpecReader().readFile(path);
+        out.append("    queries:     ");
+        out.append(Integer.toString(contexts.size()));
+        out.append("\n    features:    ");
+        out.append(Long.toString(count));
+        out.append("\n    avg-result:  ");
+        out.append(Double.toString(result / count));
+        out.append("\n");
     }
 
-    private abstract static class BenchmarkTask implements Callable<Double>
+    public static class Result
     {
-        Features features;
-        String queryString;
-        Bounds[] boxes;
-        int boxStartIndex;
-        int boxEndIndex;
         long count;
         double result;
-
-        public BenchmarkTask()
-        {
-        }
-
-        public void init(Features features, String queryString,
-            Bounds[] boxes, int boxStartIndex, int boxEndIndex)
-        {
-            this.features = features;
-            this.queryString = queryString;
-            this.boxes = boxes;
-            this.boxStartIndex = boxStartIndex;
-            this.boxEndIndex = boxEndIndex;
-        }
-
-        protected abstract void perform(Features<?> view);
-        public abstract String result();
-        public abstract String resultKey();
-
-        @Override public Double call() throws Exception
-        {
-            for(int i=boxStartIndex; i<boxEndIndex; i++)
-            {
-                perform(features.select(queryString).in(boxes[i]));
-            }
-            // return result;
-            return (double)count;
-        }
     }
 
-    private static class CountTask extends BenchmarkTask
+    public abstract static class Action
     {
-        public CountTask() {}
-
-        @Override public void perform(Features<?> view)
-        {
-            long c = view.count();
-            count += c;
-            result += c;
-        }
-
-        @Override public String result()
-        {
-            return String.format("Counted %d features", (long)result);
-        }
-
-        @Override public String resultKey() { return "should_be_1"; }
+        abstract void perform(Features<?> features, Result result);
     }
 
-    /**
-     * A BenchmarkTask that retrieves the names of the selected features
-     * and adds their lengths to the result.
-     */
-    private static class NameTask extends BenchmarkTask
+    public static class CountAction extends Action
     {
-        public NameTask() {}
-
-        @Override public void perform(Features<?> view)
+        @Override void perform(Features<?> view, Result result)
         {
             view.forEach(f ->
             {
-                result += f.tag("name").length();
-                count++;
+                result.count++;
             });
         }
-
-        @Override public String result()
-        {
-            return String.format("Average name has %.1f characters", result / count);
-        }
-
-        @Override public String resultKey() { return "avg_name_length"; }
     }
 
-    /**
-     * A BenchmarkTask that adds the length of the feature (if it is a way),
-     * or the length of its perimeter (if it is an area-way) to the result.
-     */
-    private static class MeasureTask extends BenchmarkTask
+    public static class NameAction extends Action
     {
-        public MeasureTask() {}
-
-        @Override public void perform(Features<?> view)
+        @Override void perform(Features<?> view, Result result)
         {
             view.forEach(f ->
             {
-                if(f instanceof Way)
-                {
-                    Way way = (Way)f;
-                    result += way.length();
-                    count++;
-                }
+                result.result += f.tag("name").length();
+                result.count++;
             });
         }
-
-        @Override public String result()
-        {
-            return String.format("Average Way is %.2f meters long", result / count);
-        }
-
-        @Override public String resultKey() { return "avg_length_meters"; }
     }
 
-
-    private static class TagsTask extends BenchmarkTask
+    public static class LengthAction extends Action
     {
-        public TagsTask()
+        @Override void perform(Features<?> view, Result result)
         {
+            view.forEach(f ->
+            {
+                result.result += f.length();
+                result.count++;
+            });
         }
+    }
 
-        @Override public void perform(Features<?> view)
+    public static class TagAction extends Action
+    {
+        @Override void perform(Features<?> view, Result result)
         {
             view.forEach(f ->
             {
                 Tags tags = f.tags();
                 while(tags.next())
                 {
-                    result += tags.key().length();
-                    result += tags.stringValue().length();
+                    result.result += tags.key().length();
+                    result.result += tags.stringValue().length();
                 }
-                count++;
+                result.count++;
             });
         }
-
-        @Override public String result()
-        {
-            return String.format("Average feature has %.1f tag characters", result / count);
-        }
-
-        @Override public String resultKey() { return "avg_tags_length"; }
     }
 
-    void benchmark(String queryString, Class<?> taskClass, Bounds[] boxes,
-        Benchmark bm, boolean parallel) throws Exception
+    private class Task implements Callable<Result>
     {
-        Stopwatch timer = new Stopwatch();
-        Constructor taskConstructor = taskClass.getConstructor();
-        long count = 0;
-        long time;
-        double result;
-        String resultKey;
+        private final int first;
+        private final int last;
 
-        if(parallel)
+        Task(int first, int last)
         {
-            int batchSize;
-            switch(boxes.length)
+            this.first = first;
+            this.last = last;
+        }
+
+        @Override public Result call()
+        {
+            Result res = new Result();
+            for(int i=first; i<=last; i++)
             {
-            case 1000:
-                batchSize = 25;
-                break;
-            case 10000:
-                batchSize = 250;
-                break;
-            default:
-                batchSize = 500;
-                break;
+                performSingle(contexts.get(i), res);
             }
-
-            int batchCount = (boxes.length + batchSize - 1) / batchSize;
-            List<BenchmarkTask> tasks = new ArrayList<>(batchCount);
-            int startBox = 0;
-            int endBox;
-            for(int i=0; i<batchCount; i++)
-            {
-                endBox = Math.min(startBox + batchSize, boxes.length);
-                BenchmarkTask task = (BenchmarkTask)taskConstructor.newInstance();
-                task.init(features, queryString, boxes, startBox, endBox);
-                tasks.add(task);
-                startBox = endBox;
-                // log.debug("Batched boxes {} to {}", startBox, endBox);
-            }
-            timer.start();
-            for(Future<Double> val: executor.invokeAll(tasks)) count += val.get();
-            time = timer.stop();
-            result = 0;
-            for(BenchmarkTask task : tasks)
-            {
-                result += task.result;
-            }
-            resultKey = tasks.get(0).resultKey();
+            return res;
         }
-        else
-        {
-            BenchmarkTask task = (BenchmarkTask)taskConstructor.newInstance();
-            task.init(features, queryString, boxes, 0, boxes.length);
-            timer.start();
-            Log.debug("Executing...");
-            count = task.call().longValue();
-            time = timer.stop();
-            result = task.result;
-            resultKey = task.resultKey();
-        }
-
-        bm.queries = boxes.length;
-        bm.totalFeatures = count;
-        bm.times.add(time);
-
-        Log.debug("%s for %d boxes (%s): %d features in %s ms, %s = %f",
-            queryString, boxes.length, parallel ? "parallel" : "sequential",
-            count, time, resultKey, result / count);
-    }
-
-
-    private Map<String, RandomBoxes> makeBoxes(String area) throws IOException
-    {
-        Map<String, RandomBoxes> boxes = new HashMap<>();
-        Bounds areaBounds = areas.get(area);
-        for(Map.Entry<String,BoxSpecs> e: boxSpecs.entrySet())
-        {
-            String name = e.getKey();
-            BoxSpecs spec = e.getValue();
-            Log.debug("Preparing boxes for %s - size %s", area, name);
-            Path path = outputPath.resolve(String.format("%s-%s.boxes", area, name));
-            boxes.put(name, RandomBoxes.loadOrCreate(path, features, areaBounds,
-                spec.count, spec.minMeters, spec.maxMeters, 10));
-        }
-        return boxes;
-    }
-
-    /*
-    private List<String> makeScript(int runs) throws IOException
-    {
-        List<String> script = new ArrayList<>();
-        List<String> tasks = new ArrayList<>();
-        List<String> sizes = new ArrayList<>();
-        for(Map.Entry<String,String> e: querySpecs.entrySet())
-        {
-            String query = e.getKey();
-            String[] specs = e.getValue().split("[,\\s]\\s*");
-            for(String s: specs)
-            {
-                if(taskClasses.containsKey(s))
-                {
-                    tasks.add(s);
-                }
-                else if (boxSpecs.containsKey(s))
-                {
-                    sizes.add(s);
-                }
-                else
-                {
-                    throw new RuntimeException(String.format(
-                        "%s: '%s' is neither a task nor box size", query, s));
-                }
-            }
-            if(tasks.isEmpty() || sizes.isEmpty())
-            {
-                throw new RuntimeException(String.format(
-                    "%s: Must specify at least one task and one box size", query));
-            }
-
-            for(String task: tasks)
-            {
-                for(String size: sizes)
-                {
-                    String step = String.format("%s-%s-%s", query, task, size);
-                    for(int i=0; i<runs; i++)
-                    {
-                        script.add(step);
-                    }
-                }
-            }
-            tasks.clear();
-            sizes.clear();
-        }
-        return script;
-    }
-     */
-
-    private List<String> makeScript(int runs) throws IOException
-    {
-        List<String> script = new ArrayList<>();
-        for(String s: querySpecs)
-        {
-            for(int i=0; i<runs; i++) script.add(s);
-        }
-        Collections.shuffle(script);
-        return script;
-    }
-
-
-    void performOne(Map<String,Benchmark> benchmarks, String benchmark, Map<String, RandomBoxes> boxes) throws Exception
-    {
-        Log.debug(benchmark);
-        String[] parts = benchmark.split("-");
-        String query = parts[0];
-        String task = parts[1];
-        String size = parts[2];
-        String queryString = queryStrings.get(query);
-        Benchmark bm = benchmarks.get(benchmark);
-        if(bm == null)
-        {
-            bm = new Benchmark();
-            bm.name = benchmark;
-            benchmarks.put(benchmark, bm);
-        }
-        benchmark(queryString, taskClasses.get(task),
-            boxes.get(size).boxes(), bm, true);
-    }
-
-    private void writeBenchmarks(Path path, String name, Map<String,Benchmark> benchmarks) throws FileNotFoundException
-    {
-        List<Benchmark> list = new ArrayList<>(benchmarks.size());
-        list.addAll(benchmarks.values());
-        list.sort(Comparator.comparing(a -> a.name));
-        PrintWriter out = new PrintWriter(new FileOutputStream(path.toFile()));
-        out.format("name: %s\n", name);
-        for(Benchmark bm: list)
-        {
-            out.format("\n%s:\n", bm.name);
-            out.format("    queries:     %d\n", bm.queries);
-            out.format("    features:    %d\n", bm.totalFeatures);
-            bm.times.sortThis();
-            out.format("    best-time:   %d\n", bm.times.getFirst());
-            out.format("    worst-time:  %d\n", bm.times.getLast());
-            out.format("    avg-time:    %d\n", (long)bm.times.average());
-            out.format("    median-time: %d\n", (long)bm.times.median());
-        }
-        out.close();
-    }
-
-    private List<String> loadOrCreateScript(Path path, int runs) throws IOException
-    {
-        if(Files.exists(path))
-        {
-            return Files.readAllLines(path);
-        }
-        List<String> script = makeScript(runs);
-        Files.write(path, script);
-        return script;
-    }
-
-    public void perform(String outputPathString, String storePathString, String area) throws Exception
-    {
-        outputPath = Paths.get(outputPathString);
-        features = new FeatureLibrary(storePathString);
-        new BenchmarkSpecReader().read(
-            getClass().getClassLoader().getResourceAsStream("benchmarks/benchmark.fab"));
-        Map<String, RandomBoxes> boxes = makeBoxes(area);
-        List<String> script = loadOrCreateScript(outputPath.resolve("script.txt"), 5);
-        Map<String,Benchmark> benchmarks = new HashMap<>();
-        for(String benchmark: script)
-        {
-            performOne(benchmarks, benchmark, boxes);
-        }
-        writeBenchmarks(outputPath.resolve("results.fab"), "test", benchmarks);
-        executor.shutdown();
-    }
-
-    public static void main(String[] args) throws Exception
-    {
-        new QueryBenchmark().perform("c:\\geodesk\\benchmarks", "C:\\geodesk\\tests\\de.gol", "germany");
-        // new QueryBenchmark().perform("../benchmarks", "world.gol", "germany");
-        // new QueryBenchmark().perform("/home/md/geodesk/benchmarks", "/home/md/geodesk/tests/de4.gol", "germany");
     }
 }

@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package com.geodesk.benchmark;
+package com.geodesk.benchmark_old;
 
 import com.clarisma.common.util.Log;
 import com.geodesk.core.Mercator;

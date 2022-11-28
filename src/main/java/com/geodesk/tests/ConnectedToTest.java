@@ -12,9 +12,6 @@ import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureId;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
-import static com.geodesk.feature.Filters.*;
-import static com.geodesk.tests.TestUtils.*;
-
 import org.eclipse.collections.api.list.primitive.LongList;
 import org.eclipse.collections.api.list.primitive.MutableLongList;
 import org.eclipse.collections.impl.list.mutable.primitive.LongArrayList;
@@ -25,7 +22,9 @@ import org.locationtech.jts.geom.Geometry;
 
 import java.util.List;
 
-public class WithinTest
+import static com.geodesk.feature.Filters.*;
+
+public class ConnectedToTest
 {
     FeatureLibrary world;
 
@@ -39,15 +38,18 @@ public class WithinTest
         world.close();
     }
 
-    @Test public void testWithin()
+    @Test public void testConnectedTo()
     {
-        Geometry bavaria = world
-            .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
-            .first().toGeometry();
-        Features<?> highways = world.select("w[highway]");
-        LongList slow = getSet(highways.select(slowWithin(bavaria)));
-        LongList fast = getSet(highways.select(within(bavaria)));
-        checkNoDupes("fast", fast);
-        compareSets("slow", slow, "fast", fast);
+        Feature route = world
+            .select("r[type=route_master][route_master=bicycle][ref=D10]")
+            .first();
+
+        for(Feature f: world
+            .select("r[route=bicycle]")
+            .select(connectedTo(route)))
+        {
+            Log.debug("- %s %s", f, f.stringValue("name"));
+        }
     }
 }
+

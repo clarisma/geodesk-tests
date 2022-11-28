@@ -73,7 +73,7 @@ public class SegmentExperiment
 
     public static void main(String[] args)
     {
-        world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        world = new FeatureLibrary("c:\\geodesk\\tests\\germany.gol");
         Iterable<Way> ways = world.ways("a[building]").toList();
         measureImmutable(ways);
         measureMutable(ways);
