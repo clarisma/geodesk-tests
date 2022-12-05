@@ -24,6 +24,11 @@ public abstract class Benchmark implements Runnable, Comparable<Benchmark>
 {
     protected final String name;
     private final List<Long> timings = new ArrayList<>();
+    long total;
+    long best;
+    long worst;
+    long average;
+    long median;
 
     protected Benchmark(String name)
     {
@@ -72,22 +77,24 @@ public abstract class Benchmark implements Runnable, Comparable<Benchmark>
         return timings.size();
     }
 
+    public void tallyTimings()
+    {
+        Collections.sort(timings);
+        int runs = timings.size();
+        best = timings.get(0);
+        worst = timings.get(runs-1);
+        total = 0;
+        for(long t: timings) total += t;
+        average = total / runs;
+        median = timings.get(runs / 2);
+        if(runs % 1 == 0) median = (median + timings.get(runs / 2 - 1)) / 2;
+    }
+
     public void report(Appendable out) throws IOException
     {
+        tallyTimings();
         out.append(name);
         out.append(":\n");
-
-        Collections.sort(timings);
-
-        int runs = timings.size();
-        long best = timings.get(0);
-        long worst = timings.get(runs-1);
-        long total = 0;
-        for(long t: timings) total += t;
-        long average = total / runs;
-        long median = timings.get(runs / 2);
-        if(runs % 1 == 0) median = (median + timings.get(runs / 2 - 1)) / 2;
-
         reportDetails(out);
         out.append("    best-time:   ");
         out.append(Long.toString(best));
@@ -97,7 +104,7 @@ public abstract class Benchmark implements Runnable, Comparable<Benchmark>
         out.append(Long.toString(average));
         out.append("\n    median-time: ");
         out.append(Long.toString(median));
-        out.append("\n    total-time: ");
+        out.append("\n    total-time:  ");
         out.append(Long.toString(total));
         out.append("\n");
     }

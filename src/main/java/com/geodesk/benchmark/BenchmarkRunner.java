@@ -84,11 +84,35 @@ public abstract class BenchmarkRunner
     {
         Path path = rootPath.resolve("results.txt");
         PrintStream out = new PrintStream(new FileOutputStream(path.toFile()));
+        long total = 0;
+        long best = 0;
+        long worst = 0;
+        long average = 0;
+        long median = 0;
         for(Benchmark bm: benchmarks)
         {
             bm.report(out);
             out.println();
+            total += bm.total;
+            best += bm.best;
+            worst += bm.worst;
+            average += bm.average;
+            median += bm.median;
         }
+
+        out.append("all:\n");
+        out.append("    best-time:   ");
+        out.append(Long.toString(best));
+        out.append("\n    worst-time:  ");
+        out.append(Long.toString(worst));
+        out.append("\n    avg-time:    ");
+        out.append(Long.toString(average));
+        out.append("\n    median-time: ");
+        out.append(Long.toString(median));
+        out.append("\n    total-time:  ");
+        out.append(Long.toString(total));
+        out.append("\n");
+
         out.close();
     }
 
