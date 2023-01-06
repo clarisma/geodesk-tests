@@ -95,5 +95,8 @@ public class GenericExperiment
         for(Banana a : basket3) System.out.println(a);
         Basket<Banana> bananas = fruits.select(Banana.class);
         for(Banana b : bananas) System.out.println(b);
+
+        Basket<?> basket4 = basket3;
+        for(Fruit b : basket4) System.out.println(b);
     }
 }

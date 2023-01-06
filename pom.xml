@@ -4,7 +4,7 @@
 
   <groupId>com.geodesk</groupId>
   <artifactId>geodesk-tests</artifactId>
-  <version>0.1.1-SNAPSHOT</version>
+  <version>0.1.4</version>
   <packaging>jar</packaging>
 
   <name>GeoDesk Tests</name>
@@ -21,10 +21,18 @@
   	<dependency>
 		<groupId>com.geodesk</groupId>
   		<artifactId>geodesk</artifactId>
-  		<version>0.1.1-SNAPSHOT</version>
+  		<version>0.1.4</version>
 	</dependency>
 
-    <!-- Testing -->
+      <!-- for experiments only -->
+  <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.12.0</version>
+  </dependency>
+
+
+      <!-- Testing -->
     <dependency>
       	<groupId>junit</groupId>
       	<artifactId>junit</artifactId>

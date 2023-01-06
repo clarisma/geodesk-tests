@@ -15,8 +15,9 @@ public class TestSettings
     {
         // return "/home/md/geodesk/tests/w3.gol";
         // return "c:\\geodesk\\tests\\de-from-world.gol";
-        return "c:\\geodesk\\tests\\de3.gol";
+        return "c:\\geodesk\\tests\\de6.gol";
         // return "c:\\geodesk\\tests\\germany.gol";
+        // return "c:\\geodesk\\tests\\de.gol";
     }
     public static String tileURL() { return null; }
 

@@ -134,6 +134,7 @@ public class MultiSelectorTest
         Assert.assertEquals(nodesCount + waysCount + areaCount + relationCount,
             world.select("ran, ar, n, war, na, w, nr").count());
 
+        // some first stations may be tagges as fire_hydrant as well!
         Assert.assertEquals(stationCount + hydrantCount,
             world.select("na[amenity=fire_station], n[emergency=fire_hydrant]").count());
         Assert.assertEquals(stationCount + hydrantCount,
