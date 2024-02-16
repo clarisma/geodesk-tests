@@ -71,4 +71,26 @@ public class IntersectsTest
         inStates.sortThis();
         compareSets("country", inCountry, "all_states", inStates);
     }
+
+    void timeQuery(String fmt, Features<?> features)
+    {
+        for(int i=0; i<5; i++)
+        {
+            long start = System.nanoTime();
+            long count = features.count();
+            long elapsed = System.nanoTime() - start;
+            System.out.format(fmt, count);
+            System.out.format(": %.3f seconds\n", (double) elapsed / 1_000_000_000);
+        }
+    }
+
+     @Test public void testBuildingsUSA()
+    {
+        Features<?> buildings = world.select("a[building=yes]");
+        Geometry country = world
+            .select("a[boundary=administrative][admin_level=2][name='United States']")
+            .first().toGeometry();
+        timeQuery("%d buildings intersect USA", buildings.select(intersects(country)));
+        timeQuery("%d buildings within USA", buildings.select(within(country)));
+    }
 }
