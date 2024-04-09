@@ -8,8 +8,8 @@
 package com.geodesk.feature.store;
 
 import com.clarisma.common.util.Log;
-import com.geodesk.core.Tile;
-import com.geodesk.core.Box;
+import com.geodesk.geom.Tile;
+import com.geodesk.geom.Box;
 import com.geodesk.geom.Bounds;
 import org.junit.Before;
 import org.junit.Test;

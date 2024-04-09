@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 
 public class IntersectsQueryBenchmark extends QueryBenchmark<Geometry>
 {
-    public IntersectsQueryBenchmark(String name, Features<?> features, List<Geometry> shapes,
+    public IntersectsQueryBenchmark(String name, Features features, List<Geometry> shapes,
         Action action, ExecutorService executor)
     {
         super(name, features, shapes, action, executor);

@@ -31,7 +31,7 @@ public abstract class QueryBenchmark<T> extends Benchmark
      * The features against which this benchmark will be applied.
      * This can be the library as a whole, or a selected set.
      */
-    protected final Features<?> features;
+    protected final Features features;
     /**
      * The list of contexts, one for each query that will be executed by this benchmark.
      */
@@ -54,7 +54,7 @@ public abstract class QueryBenchmark<T> extends Benchmark
     private final ExecutorService executor;
     private final List<Task> tasks;
 
-    public QueryBenchmark(String name, Features<?> features, List<T> contexts,
+    public QueryBenchmark(String name, Features features, List<T> contexts,
         Action action, ExecutorService executor)
     {
         super(name);
@@ -184,12 +184,12 @@ public abstract class QueryBenchmark<T> extends Benchmark
 
     public abstract static class Action
     {
-        abstract void perform(Features<?> features, Result result);
+        abstract void perform(Features features, Result result);
     }
 
     public static class CountAction extends Action
     {
-        @Override void perform(Features<?> view, Result result)
+        @Override void perform(Features view, Result result)
         {
             view.forEach(f ->
             {
@@ -200,7 +200,7 @@ public abstract class QueryBenchmark<T> extends Benchmark
 
     public static class NameAction extends Action
     {
-        @Override void perform(Features<?> view, Result result)
+        @Override void perform(Features view, Result result)
         {
             view.forEach(f ->
             {
@@ -212,7 +212,7 @@ public abstract class QueryBenchmark<T> extends Benchmark
 
     public static class LengthAction extends Action
     {
-        @Override void perform(Features<?> view, Result result)
+        @Override void perform(Features view, Result result)
         {
             view.forEach(f ->
             {
@@ -224,7 +224,7 @@ public abstract class QueryBenchmark<T> extends Benchmark
 
     public static class TagAction extends Action
     {
-        @Override void perform(Features<?> view, Result result)
+        @Override void perform(Features view, Result result)
         {
             view.forEach(f ->
             {

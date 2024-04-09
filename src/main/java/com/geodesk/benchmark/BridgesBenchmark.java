@@ -7,7 +7,7 @@
 
 package com.geodesk.benchmark;
 
-import com.geodesk.core.Box;
+import com.geodesk.geom.Box;
 import com.geodesk.feature.Feature;
 import com.geodesk.feature.Features;
 import com.geodesk.feature.Filters;
@@ -18,10 +18,10 @@ public class BridgesBenchmark extends Benchmark
 {
     private final Feature bavaria;
     private final Feature danube;
-    private final Features<?> bridges;
+    private final Features bridges;
     private long count;
 
-    public BridgesBenchmark(Features<?> world)
+    public BridgesBenchmark(Features world)
     {
         super("bridges-across-danube-in-bavaria");
         bavaria = world

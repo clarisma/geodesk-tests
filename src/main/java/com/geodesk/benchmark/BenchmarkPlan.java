@@ -9,8 +9,7 @@ package com.geodesk.benchmark;
 
 import com.clarisma.common.fab.FabReader;
 import com.clarisma.common.util.Log;
-import com.geodesk.core.Box;
-import com.geodesk.feature.Feature;
+import com.geodesk.geom.Box;
 import com.geodesk.feature.Features;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
@@ -38,7 +37,7 @@ public class BenchmarkPlan
     protected final Map<String, String> queries = new HashMap<>();
     protected final ShapeMaker shapeMaker;
 
-    public BenchmarkPlan(Path rootPath, String settings, Features<Feature> features) throws IOException, ParseException
+    public BenchmarkPlan(Path rootPath, String settings, Features features) throws IOException, ParseException
     {
         this.rootPath = rootPath;
         shapePath = rootPath.resolve("shapes");

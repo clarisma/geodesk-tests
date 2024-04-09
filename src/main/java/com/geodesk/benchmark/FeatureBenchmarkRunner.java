@@ -7,9 +7,7 @@
 
 package com.geodesk.benchmark;
 
-import com.clarisma.common.util.Log;
-import com.geodesk.core.Box;
-import com.geodesk.feature.Feature;
+import com.geodesk.geom.Box;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
 import org.locationtech.jts.geom.Geometry;
@@ -64,7 +62,7 @@ public class FeatureBenchmarkRunner extends BenchmarkRunner
         String[] parts = name.split("-");
         String query = plan.queries.get(parts[0]);
         if(query == null) throw new RuntimeException("Unknown query: " + parts[0]);
-        Features<?> features = world.select(query);
+        Features features = world.select(query);
         QueryBenchmark.Action action = actions.get(parts[1]);
         if(action == null) throw new RuntimeException("Unknown action: " + parts[1]);
         String spatial = parts[2];

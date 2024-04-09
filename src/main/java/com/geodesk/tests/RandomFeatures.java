@@ -10,7 +10,7 @@ package com.geodesk.tests;
 import com.clarisma.common.math.MathUtils;
 import com.clarisma.common.text.Strings;
 import com.clarisma.common.util.Log;
-import com.geodesk.core.Box;
+import com.geodesk.geom.Box;
 import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
@@ -46,9 +46,9 @@ import java.util.Random;
 public class RandomFeatures
 {
     Random random = new Random();
-    Features<?> features;
+    Features features;
 
-    RandomFeatures(Features<?> features)
+    RandomFeatures(Features features)
     {
         this.features = features;
     }

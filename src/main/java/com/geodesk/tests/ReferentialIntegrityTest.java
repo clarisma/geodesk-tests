@@ -8,7 +8,7 @@
 package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
-import com.geodesk.core.Box;
+import com.geodesk.geom.Box;
 import com.geodesk.feature.*;
 
 import com.geodesk.feature.match.Matcher;
@@ -100,7 +100,7 @@ public class ReferentialIntegrityTest
             if (f instanceof Relation) set1.add(f);
         }
 
-        for (Relation rel : features.relations())
+        for (Feature rel : features.relations())
         {
             set2.add(rel);
         }
@@ -159,7 +159,7 @@ public class ReferentialIntegrityTest
         long relCount = 0;
         long memberCount = 0;
         long start = System.currentTimeMillis();
-        for (Relation rel : features.relations())
+        for (Feature rel : features.relations())
         {
             relCount++;
 
@@ -183,7 +183,7 @@ public class ReferentialIntegrityTest
                         "Feature.belongsTo() false, but %s belongs to %s", member, rel));
                 }
                 // assertTrue(member.belongsTo(rel));
-                assertTrue(member.parentRelations().contains(rel));
+                assertTrue(member.parents().relations().contains(rel));
                 uniqueRoles.add(member.role());
             }
         }
@@ -245,7 +245,7 @@ public class ReferentialIntegrityTest
         assertEquals(linealRailwayHighways, features.select("w[highway]")
             .ways("*[railway]").count());
 
-        WorldView<?> linealWaysQuery = (WorldView<?>) features.ways()
+        WorldView linealWaysQuery = (WorldView) features.ways()
             .select("wa[highway]")
             .ways("*[railway][highway]")
             .select("w");
@@ -258,12 +258,12 @@ public class ReferentialIntegrityTest
             .select("w")
             .count());
 
-        Features<?> empty = features.ways()
+        Features empty = features.ways()
             .select("wa[highway]")
             .ways("*[railway][highway]")
             .select("*[railway]")
             .nodes();
-        assertTrue(empty instanceof EmptyView<?>);
+        assertTrue(empty instanceof EmptyView);
     }
 
     /**
@@ -274,14 +274,14 @@ public class ReferentialIntegrityTest
     {
         for (Feature f : features.in(Box.ofWorld()))
         {
-            for (Relation rel : f.parentRelations())
+            for (Feature rel : f.parents().relations())
             {
                 assertTrue(rel.members().contains(f));
             }
         }
     }
 
-    void testContainsQueries(Features<?> features, Set<Feature> others)
+    void testContainsQueries(Features features, Set<Feature> others)
     {
         testContains(features.select("a[landuse]"), others);
         testContains(features
@@ -307,7 +307,7 @@ public class ReferentialIntegrityTest
      * @param features the collection to test
      * @param others   features that may be in the collection, but not likely
      */
-    void testContains(Features<?> features, Set<Feature> others)
+    void testContains(Features features, Set<Feature> others)
     {
         Set<Feature> notContained = new HashSet<>(others);
         for (Feature f : features)
@@ -328,12 +328,12 @@ public class ReferentialIntegrityTest
      * @param sampleInterval
      * @return
      */
-    <T extends Feature> Set<T> randomSample(Features<T> features, int sampleInterval)
+    Set<Feature> randomSample(Features features, int sampleInterval)
     {
-        Set<T> sample = new HashSet<>();
+        Set<Feature> sample = new HashSet<>();
         Random random = new Random();
         int skip = random.nextInt(sampleInterval);
-        for (T f : features)
+        for (Feature f : features)
         {
             skip--;
             if (skip > 0) continue;
@@ -361,20 +361,20 @@ public class ReferentialIntegrityTest
         long totalFeatureNodeCount = 0;
         long totalHighwayNodeCount = 0;
         long totalEntranceNodeCount = 0;
-        for (Way way : features.ways())
+        for (Feature way : features.ways())
         {
             Box wayBox = way.bounds();
             Box calculatedBox = new Box();
 
-            Node firstNode = null;
-            Node lastNode = null;
+            Feature firstNode = null;
+            Feature lastNode = null;
             int nodeCount = 0;
             int highwayNodeCount = 0;
             int entranceNodeCount = 0;
 
             int[] xy = way.toXY();
 
-            for (Node node : way.nodes())
+            for (Feature node : way.nodes())
             {
                 if (firstNode == null) firstNode = node;
                 lastNode = node;
@@ -405,7 +405,7 @@ public class ReferentialIntegrityTest
                 assertTrue(geom instanceof Lineal);
             }
 
-            for (Node node : way.nodes("*"))
+            for (Feature node : way.nodes("*"))
             {
                 assertTrue(node.id() > 0);
                 totalFeatureNodeCount++;
@@ -426,33 +426,21 @@ public class ReferentialIntegrityTest
         Log.debug("- %d nodes tagged 'entrance'", totalEntranceNodeCount);
     }
 
-    /*
-    @Test public void testFeatureNodes()
-    {
-        for (Way way : features.ways())
-        {
-            for (Node node : way.nodes("*"))
-            {
-                Log.debug("- %s: %s", node, node.stringValue("highway"));
-            }
-        }
-    }
-     */
 
     @Test public void testParentWays()
     {
         long nodeCount = 0;
         long parentWayCount = 0;
         long waysAtNodes = 0;
-        Set<Way> sample = randomSample(features.ways(), 1_000);
+        Set<Feature> sample = randomSample(features.ways(), 1_000);
         long start = System.currentTimeMillis();
-        for (Way way : sample)
+        for (Feature way : sample)
         {
-            for (Node node : way.nodes())
+            for (Feature node : way.nodes())
             {
-                Features<Way> parentWays = node.parentWays();
+                Features parentWays = node.parents().ways();
                 Assert.assertTrue(parentWays.contains(way));
-                for (Way parentWay : parentWays)
+                for (Feature parentWay : parentWays)
                 {
                     Assert.assertTrue(parentWay.nodes().contains(node));
                     parentWayCount++;
@@ -472,35 +460,6 @@ public class ReferentialIntegrityTest
         Log.debug("ParentWay queries consulted %d ways at node location.", waysAtNodes);
     }
 
-
-    /*
-    @Test public void testNodes()
-    {
-        long nodeCount = 0;
-        long wayNodeCount = 0;
-        long parentWayCount = 0;
-        Node nodeWithMost = null;
-        long mostParentCount = 0;
-        for (Node node : features.nodes())
-        {
-            nodeCount++;
-            long count = node.parentWays().count();
-            if (count > 0)
-            {
-                wayNodeCount++;
-                if (count > mostParentCount)
-                {
-                    mostParentCount = count;
-                    nodeWithMost = node;
-                }
-                parentWayCount += count;
-            }
-        }
-        Log.debug("Checked %d nodes: %d are way-nodes, with %d parent ways",
-            nodeCount, wayNodeCount, parentWayCount);
-        Log.debug("%s has %d parent ways", nodeWithMost, mostParentCount);
-    }
-    */
 
     private void assertNotTagged(Feature f, String k)
     {
@@ -565,9 +524,9 @@ public class ReferentialIntegrityTest
 
     @Test public void testSpecificWayTags()
     {
-        for (Way way : features.ways("w[highway]"))
+        for (Feature way : features.ways("w[highway]"))
         {
-            for (Node node : way.nodes(
+            for (var node : way.nodes(
                 "n[!highway][!railway][!barrier][!entrance][!created_by]" +
                     "[!traffic_sign][!crossing]"))
             {
@@ -590,11 +549,11 @@ public class ReferentialIntegrityTest
     {
         long relCount = 0;
         long superRelCount = 0;
-        for (Relation rel : features.relations())
+        for (var rel : features.relations())
         {
-            if(!rel.memberRelations().isEmpty())
+            if(!rel.members().relations().isEmpty())
             {
-                Feature firstMember = rel.memberRelations().first();
+                Feature firstMember = rel.members().relations().first();
                 assertTrue(firstMember instanceof Relation);
                 superRelCount++;
             }
@@ -629,21 +588,21 @@ public class ReferentialIntegrityTest
         long memberWayAreasManual = 0;
         long memberRelationAreasManual = 0;
 
-        for (Relation rel : features.relations())
+        for (var rel : features.relations())
         {
-            long thisMemberRelations = rel.memberRelations().count();
-            long thisMemberWays = rel.memberWays().count();
+            long thisMemberRelations = rel.members().relations().count();
+            long thisMemberWays = rel.members().ways().count();
             members += rel.members().count();
-            memberNodes += rel.memberNodes().count();
+            memberNodes += rel.members().nodes().count();
             memberWays += thisMemberWays;
             memberRelations += thisMemberRelations;
             memberAreas += rel.members("a").count();
-            memberWayAreas += rel.memberWays("a").count();
-            memberRelationAreas += rel.memberRelations("a").count();
-            assertEquals(thisMemberRelations, rel.memberRelations("ar").count());
-            assertEquals(thisMemberWays, rel.memberWays("wa").count());
-            assertEquals(thisMemberRelations, rel.memberRelations("nar").count());
-            assertEquals(thisMemberWays, rel.memberWays("nwa").count());
+            memberWayAreas += rel.members().ways("a").count();
+            memberRelationAreas += rel.members().relations("a").count();
+            assertEquals(thisMemberRelations, rel.members().relations("ar").count());
+            assertEquals(thisMemberWays, rel.members().ways("wa").count());
+            assertEquals(thisMemberRelations, rel.members().relations("nar").count());
+            assertEquals(thisMemberWays, rel.members().ways("nwa").count());
 
             for(Feature f: rel)
             {
@@ -694,10 +653,10 @@ public class ReferentialIntegrityTest
             long start = System.currentTimeMillis();
             long relCount = 0;
             long memberCount = 0;
-            for (Relation rel : features.relations(/* "a[boundary]" */))
+            for (var rel : features.relations(/* "a[boundary]" */))
             {
                 relCount++;
-                for(Node node: rel.memberNodes("n[place]"))
+                for(var node: rel.members().nodes("n[place]"))
                 {
                     // Log.debug("%s: %s", rel, node);
                     memberCount++;
@@ -706,16 +665,6 @@ public class ReferentialIntegrityTest
             long end = System.currentTimeMillis();
             Log.debug("%d nodes in %d relations (%d ms)", memberCount, relCount, end - start);
         }
-
-        /*
-        for(Relation rel: features.relations("r"))
-        {
-            for(Way way: rel.memberWays("w[highway]"))
-            {
-                Log.debug("%s: %s", rel, way);
-            }
-        }
-         */
     }
 
     @Test public void testMemberRoleQueries()
@@ -727,7 +676,7 @@ public class ReferentialIntegrityTest
             long relCount = 0;
             long memberCount = 0;
             long memberCountSlow = 0;
-            for (Relation rel : features.relations(/* "a[boundary]" */))
+            for (var rel : features.relations(/* "a[boundary]" */))
             {
                 relCount++;
                 Iterator<Feature> iter = ((StoredRelation)rel).iterator(
@@ -738,7 +687,7 @@ public class ReferentialIntegrityTest
                     memberCount++;
                 }
 
-                for(Node node: rel.memberNodes())
+                for(var node: rel.members().nodes())
                 {
                     if(node.role().equals("admin_centre")) memberCountSlow++;
                 }

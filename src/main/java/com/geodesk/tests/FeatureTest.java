@@ -7,11 +7,9 @@
 
 package com.geodesk.tests;
 
-import com.geodesk.core.Box;
 import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
-import com.geodesk.feature.Way;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,8 +36,8 @@ public class FeatureTest
      */
     @Test public void testCoordinates()
     {
-        Features<Way> ways = features.ways();
-        for (Way w : ways)
+        Features ways = features.ways();
+        for (Feature w : ways)
         {
             int[] coords = w.toXY();
             Geometry g = w.toGeometry();

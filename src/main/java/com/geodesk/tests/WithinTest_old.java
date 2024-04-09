@@ -8,7 +8,7 @@
 package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
-import com.geodesk.core.Box;
+import com.geodesk.geom.Box;
 import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
@@ -32,7 +32,7 @@ public class WithinTest_old
 
         Point pt = geomBuilder.createPointFromLonLat(lon, lat);
 
-        Features<?> areas = world
+        Features areas = world
             .select("a")
             .in(Box.atLonLat(lon, lat));
 
@@ -76,7 +76,7 @@ public class WithinTest_old
 
         Point pt = geomBuilder.createPointFromLonLat(lon, lat);
 
-        Features<?> areas = world
+        Features areas = world
             .select("a")
             .in(Box.atLonLat(lon, lat));
 

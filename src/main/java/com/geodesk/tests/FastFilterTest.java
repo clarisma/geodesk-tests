@@ -9,8 +9,8 @@ package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
 import com.geodesk.benchmark.SimpleBenchmark;
-import com.geodesk.core.Box;
-import com.geodesk.core.Tile;
+import com.geodesk.geom.Box;
+import com.geodesk.geom.Tile;
 import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Filter;
@@ -27,7 +27,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class FastFilterTest

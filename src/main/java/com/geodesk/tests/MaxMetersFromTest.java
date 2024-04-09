@@ -7,7 +7,6 @@
 
 package com.geodesk.tests;
 
-import com.geodesk.core.Box;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.util.MapMaker;
 import org.junit.After;

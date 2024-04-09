@@ -44,7 +44,7 @@ public class WithinTest
         Geometry bavaria = world
             .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .first().toGeometry();
-        Features<?> highways = world.select("w[highway]");
+        Features highways = world.select("w[highway]");
         LongList slow = getSet(highways.select(slowWithin(bavaria)));
         LongList fast = getSet(highways.select(within(bavaria)));
         checkNoDupes("fast", fast);

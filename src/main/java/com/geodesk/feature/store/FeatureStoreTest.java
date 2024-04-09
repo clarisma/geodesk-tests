@@ -1,9 +1,9 @@
 //package com.geodesk.feature.store;
 //
-//import com.geodesk.core.Tile;
+//import com.geodesk.geom.Tile;
 //import com.geodesk.feature.*;
 //import com.geodesk.feature.polygon.PolygonBuilder;
-//import com.geodesk.core.Box;
+//import com.geodesk.geom.Box;
 //import org.apache.logging.log4j.LogManager;
 //import org.apache.logging.log4j.Logger;
 //import org.eclipse.collections.api.set.primitive.MutableLongSet;

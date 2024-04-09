@@ -7,7 +7,7 @@
 
 package com.geodesk.benchmark;
 
-import com.geodesk.core.Box;
+import com.geodesk.geom.Box;
 import com.geodesk.feature.Features;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutorService;
 
 public class BoxQueryBenchmark extends QueryBenchmark<Box>
 {
-    public BoxQueryBenchmark(String name, Features<?> features, List<Box> shapes, Action action,
+    public BoxQueryBenchmark(String name, Features features, List<Box> shapes, Action action,
         ExecutorService executor)
     {
         super(name, features, shapes, action, executor);

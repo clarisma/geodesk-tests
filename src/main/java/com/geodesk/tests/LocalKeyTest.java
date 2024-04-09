@@ -71,7 +71,7 @@ public class LocalKeyTest
     {
         FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\s8.gol");
 
-        Features<?> harbours = world.nodes("[harbour]");
+        Features harbours = world.nodes("[harbour]");
 
         long nodeCount = world.nodes().count();
         long harbourCount = harbours.count();
@@ -125,7 +125,7 @@ public class LocalKeyTest
     {
         FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\s8.gol");
 
-        Features<?> harbours = world.nodes("[harbour]");
+        Features harbours = world.nodes("[harbour]");
         long count = harbours.count();
         Log.debug("%d results", count);
 

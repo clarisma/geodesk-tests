@@ -8,7 +8,7 @@
 package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
-import com.geodesk.core.Box;
+import com.geodesk.geom.Box;
 import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;
 import org.junit.Test;

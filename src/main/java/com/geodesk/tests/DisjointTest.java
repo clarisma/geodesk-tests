@@ -7,10 +7,9 @@
 
 package com.geodesk.tests;
 
-import com.geodesk.core.Box;
-import com.geodesk.core.Tile;
+import com.geodesk.geom.Box;
+import com.geodesk.geom.Tile;
 import com.geodesk.feature.*;
-import com.geodesk.feature.filter.AndFilter;
 import com.geodesk.feature.store.TileIndexWalker;
 import com.geodesk.feature.store.Tip;
 import com.geodesk.util.MapMaker;
@@ -40,11 +39,11 @@ public class DisjointTest
             .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
             .first();
-        Features<?> rivers = world.select("r[waterway=river]");
+        Features rivers = world.select("r[waterway=river]");
 
         map.add(bavaria).color("red");
 
-        Features<?> riversOutsideBavaria = rivers
+        Features riversOutsideBavaria = rivers
             .select(Filters.disjoint(bavaria));
 
         TestUtils.checkNoDupes("rivers-outside-bavaria", TestUtils.getSet(riversOutsideBavaria));
@@ -63,7 +62,7 @@ public class DisjointTest
             .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
             .first();
-        Features<?> rivers = world.select("r[waterway=river][name=Theel]");
+        Features rivers = world.select("r[waterway=river][name=Theel]");
 
         map.add(bavaria).color("red");
 

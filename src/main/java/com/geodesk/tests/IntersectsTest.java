@@ -39,7 +39,7 @@ public class IntersectsTest
         world.close();
     }
 
-    LongList getFeatures(Features<?> features)
+    LongList getFeatures(Features features)
     {
         MutableLongList list = new LongArrayList();
         for(Feature f: features)
@@ -51,7 +51,7 @@ public class IntersectsTest
 
     @Test public void testIntersects()
     {
-        Features<?> restaurants = world.select("na[amenity=restaurant]");
+        Features restaurants = world.select("na[amenity=restaurant]");
         Geometry country = world
             .select("a[boundary=administrative][admin_level=2][name:en=Germany]")
             .first().toGeometry();
@@ -72,7 +72,7 @@ public class IntersectsTest
         compareSets("country", inCountry, "all_states", inStates);
     }
 
-    void timeQuery(String fmt, Features<?> features)
+    void timeQuery(String fmt, Features features)
     {
         for(int i=0; i<5; i++)
         {
@@ -86,7 +86,7 @@ public class IntersectsTest
 
      @Test public void testBuildingsUSA()
     {
-        Features<?> buildings = world.select("a[building=yes]");
+        Features buildings = world.select("a[building=yes]");
         Geometry country = world
             .select("a[boundary=administrative][admin_level=2][name='United States']")
             .first().toGeometry();

@@ -8,6 +8,7 @@
 package com.geodesk.experiments;
 
 import com.clarisma.common.util.Log;
+import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Relation;
 import com.geodesk.feature.Way;
@@ -32,9 +33,9 @@ public class NodesExperiment
 
     @Test public void findEntrancesInRelationWays()
     {
-        for(Relation rel: world.relations("a[building]"))
+        for(Feature rel: world.relations("a[building]"))
         {
-            for(Way way: rel.memberWays())
+            for(Feature way: rel.members().ways())
             {
                 if(!way.nodes("[entrance]").isEmpty())
                 {

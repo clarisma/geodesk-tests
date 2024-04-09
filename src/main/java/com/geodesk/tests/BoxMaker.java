@@ -7,8 +7,8 @@
 
 package com.geodesk.tests;
 
-import com.geodesk.core.Box;
-import com.geodesk.core.Mercator;
+import com.geodesk.geom.Box;
+import com.geodesk.geom.Mercator;
 import com.geodesk.geom.Bounds;
 
 import java.util.Random;

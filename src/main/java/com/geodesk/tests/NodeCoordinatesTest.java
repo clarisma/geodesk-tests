@@ -10,10 +10,9 @@ package com.geodesk.tests;
 import com.clarisma.common.util.Log;
 import com.clarisma.common.util.ProgressListener;
 import com.clarisma.common.util.ProgressReporter;
-import com.geodesk.core.Box;
-import com.geodesk.core.Mercator;
+import com.geodesk.geom.Box;
+import com.geodesk.geom.Mercator;
 import com.geodesk.feature.*;
-import com.geodesk.io.osm.HeaderData;
 import com.geodesk.io.osm.OsmPbfReader;
 import org.junit.Assert;
 import org.junit.Test;
@@ -88,7 +87,7 @@ public class NodeCoordinatesTest extends AbstractFeatureTest
                     }
                     else if(f instanceof Way way)
                     {
-                        for(Node node: way.nodes())
+                        for(Feature node: way.nodes())
                         {
                             if (node.x() == x && node.y() == y)
                             {

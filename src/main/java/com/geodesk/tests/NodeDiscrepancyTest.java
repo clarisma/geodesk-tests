@@ -8,7 +8,7 @@
 package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
-import com.geodesk.core.Box;
+import com.geodesk.geom.Box;
 import com.geodesk.feature.*;
 import org.eclipse.collections.api.list.primitive.LongList;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class NodeDiscrepancyTest
     @Test public void investigateRelation1958364() // 28415
     {
         FeatureLibrary de5 = new FeatureLibrary("c:\\geodesk\\tests\\de5.gol");
-        for(Relation rel: de5.relations())
+        for(var rel: de5.relations())
         {
             if(rel.id() == 1958364)
             {
@@ -45,13 +45,13 @@ public class NodeDiscrepancyTest
     @Test public void investigateNode98677236() // 28415
     {
         FeatureLibrary de5 = new FeatureLibrary("c:\\geodesk\\tests\\de5.gol");
-        for(Node n: de5.nodes())
+        for(Feature n: de5.nodes())
         {
             if(n.id() == 98677236)
             {
                 Log.debug("%s: %s", n, n.tags());
                 Log.debug("All nodes at this location:");
-                for(Node n2: de5.nodes().in(Box.atXY(n.x(), n.y())))
+                for(Feature n2: de5.nodes().in(Box.atXY(n.x(), n.y())))
                 {
                     Log.debug("- %s: %s", n2, n2.tags());
                 }

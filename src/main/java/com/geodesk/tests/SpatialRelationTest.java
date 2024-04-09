@@ -39,7 +39,7 @@ public class SpatialRelationTest
         int mostWays = 0;
         Feature trickiestRelation = null;
 
-        for(Relation rel: world.relations("r[route=train]"))
+        for(var rel: world.relations("r[route=train]"))
         {
             int placeholders = 0;
             int nodes = 0;

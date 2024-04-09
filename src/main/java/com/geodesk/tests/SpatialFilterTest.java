@@ -8,7 +8,7 @@
 package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
-import com.geodesk.core.Box;
+import com.geodesk.geom.Box;
 import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
@@ -48,7 +48,7 @@ public class SpatialFilterTest
         Features<?> places = world
             .features("n[place=city], n[place=town][population > 25000]");
          */
-        Features<?> places = world
+        Features places = world
             .select("a[leisure=pitch][sport=soccer]");
         int count = 0;
 
@@ -56,15 +56,6 @@ public class SpatialFilterTest
 
         for (Feature place : places.in(Box.of(bavariaPoly)))
         {
-            // out.println(place.stringValue("name"));
-            // count++;
-            /*
-            if(bavariaPoly.contains(place.toGeometry()))
-            {
-            //    out.println(place.stringValue("name"));
-                count++;
-            }
-             */
             if (bavariaPrepared.contains(place.toGeometry()))
             {
                 // out.println(place.stringValue("name"));
@@ -75,15 +66,6 @@ public class SpatialFilterTest
 
         for (Feature place : places.in(Box.of(bavariaPoly)))
         {
-            // out.println(place.stringValue("name"));
-            // count++;
-            /*
-            if(bavariaPoly.contains(place.toGeometry()))
-            {
-            //    out.println(place.stringValue("name"));
-                count++;
-            }
-             */
             if (bavariaPrepared.intersects(place.toGeometry()))
             {
                 if (!found.contains(place))
@@ -111,7 +93,7 @@ public class SpatialFilterTest
         for (int i = 0; i < 10; i++)
         {
             long startQuery = System.currentTimeMillis();
-            Features<?> places = world.select("a[building]");
+            Features places = world.select("a[building]");
             long count = 0; // places.in(Box.of(bavariaPoly)).count();
 
             for (Feature place : places.in(Box.of(bavariaPoly)))
@@ -145,7 +127,7 @@ public class SpatialFilterTest
             try
             {
                 long startQuery = System.currentTimeMillis();
-                Features<?> places = world.select("a[building]");
+                Features places = world.select("a[building]");
                 long count = 0; // places.in(Box.of(bavariaPoly)).count();
 
                 for (Feature place : places.select(Filters.slowWithin(bavariaPrepared)))
@@ -179,7 +161,7 @@ public class SpatialFilterTest
         for (int i = 0; i < 10; i++)
         {
             long startQuery = System.currentTimeMillis();
-            Features<?> places = world.select("a[building]");
+            Features places = world.select("a[building]");
             long count = places.in(bavaria.bounds()).count();
 
             long end = System.currentTimeMillis();
@@ -212,7 +194,7 @@ public class SpatialFilterTest
         for (int i = 0; i < 1; i++)
         {
             long startQuery = System.currentTimeMillis();
-            Features<?> states = world.select("a[boundary=administrative][admin_level=4][name]");
+            Features states = world.select("a[boundary=administrative][admin_level=4][name]");
 
             List<State> stateList = new ArrayList<>();
 
@@ -233,7 +215,7 @@ public class SpatialFilterTest
                 stateList.size(), end - startQuery, end - start);
 
             startQuery = System.currentTimeMillis();
-            Features<?> counties = world.select("a[boundary=administrative][admin_level=6][name]");
+            Features counties = world.select("a[boundary=administrative][admin_level=6][name]");
             int countyCount = 0;
             Set<Feature> countySet = new HashSet<>();
             List<Geometry> countyGeometries = new ArrayList<>();

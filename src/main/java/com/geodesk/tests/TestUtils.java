@@ -111,7 +111,7 @@ public class TestUtils
         return false;
     }
 
-    public static LongList getSet(Features<?> features)
+    public static LongList getSet(Features features)
     {
         MutableLongList list = new LongArrayList();
         for(Feature f: features)

@@ -8,7 +8,7 @@
 package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
-import com.geodesk.core.Box;
+import com.geodesk.geom.Box;
 import com.geodesk.feature.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,7 +25,7 @@ public class NodesTest extends AbstractFeatureTest
     @Test public void testDuplicateNodes()
     {
         long duplicateNodeCount = 0;
-        for (Node node : world.nodes("n[geodesk:duplicate]"))
+        for (Feature node : world.nodes("n[geodesk:duplicate]"))
         {
             int tagCount = 0;
             Tags tags = node.tags();
@@ -36,7 +36,7 @@ public class NodesTest extends AbstractFeatureTest
             Assert.assertEquals(0, tagCount);
 
             int nodeCount = 0;
-            for (Node otherNode : world.nodes().in(Box.atXY(node.x(), node.y())))
+            for (Feature otherNode : world.nodes().in(Box.atXY(node.x(), node.y())))
             {
                 if (otherNode.equals(node)) continue;
                 Assert.assertFalse(otherNode.tags().isEmpty());
@@ -58,7 +58,7 @@ public class NodesTest extends AbstractFeatureTest
     @Test public void testOrphanNodes()
     {
         long orphanNodeCount = 0;
-        for (Node node : world.nodes("n[geodesk:orphan]"))
+        for (Feature node : world.nodes("n[geodesk:orphan]"))
         {
             int tagCount = 0;
             Tags tags = node.tags();
@@ -74,8 +74,8 @@ public class NodesTest extends AbstractFeatureTest
                 Assert.assertFalse(way.nodes().contains(node));
             }
              */
-            Assert.assertTrue(node.parentWays().isEmpty());
-            Assert.assertTrue(node.parentRelations().isEmpty());
+            Assert.assertTrue(node.parents().ways().isEmpty());
+            Assert.assertTrue(node.parents().relations().isEmpty());
             orphanNodeCount++;
         }
         Log.debug("Checked %,d orphan nodes", orphanNodeCount);

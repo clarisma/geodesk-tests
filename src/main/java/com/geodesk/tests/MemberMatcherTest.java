@@ -20,8 +20,8 @@ public class MemberMatcherTest extends AbstractFeatureTest
 {
     @Test public void testRoleQuery()
     {
-        Features<Relation> rivers = world.relations("r[waterway=river]");
-        for(Relation river: rivers)
+        Features rivers = world.relations("r[waterway=river]");
+        for(Feature river: rivers)
         {
             for(Feature m: river.members(/* "[role=side_stream]" */))
             {
@@ -32,8 +32,8 @@ public class MemberMatcherTest extends AbstractFeatureTest
 
     @Test public void testMemberQuery()
     {
-        Features<Relation> rivers = world.relations("r[waterway=river]");
-        for(Relation river: rivers)
+        Features rivers = world.relations("r[waterway=river]");
+        for(Feature river: rivers)
         {
             for(Feature m: river.members("n[!natural], w"))
             {
@@ -44,8 +44,8 @@ public class MemberMatcherTest extends AbstractFeatureTest
 
     @Test public void testTypedMemberQuery()
     {
-        Features<Relation> rivers = world.relations();
-        for(Relation river: rivers)
+        Features rivers = world.relations();
+        for(Feature river: rivers)
         {
             for(Feature m: river.members("w"))
             {

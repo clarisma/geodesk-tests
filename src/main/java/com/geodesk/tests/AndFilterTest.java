@@ -9,8 +9,8 @@ package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
 import com.geodesk.benchmark.BridgesBenchmark;
-import com.geodesk.core.Box;
-import com.geodesk.core.Tile;
+import com.geodesk.geom.Box;
+import com.geodesk.geom.Tile;
 import com.geodesk.feature.*;
 import com.geodesk.feature.filter.AndFilter;
 import com.geodesk.feature.store.TileIndexWalker;
@@ -52,7 +52,7 @@ public class AndFilterTest
             .select("r[waterway=river][name:en=Danube]")
             .first();
 
-        Features<?> bridges = world.select("w[highway][bridge]");
+        Features bridges = world.select("w[highway][bridge]");
 
         map.add(bavaria).color("red");
         map.add(danube).color("blue");
@@ -77,7 +77,7 @@ public class AndFilterTest
             .select("r[waterway=river][name:en=Danube]")
             .first();
 
-        Features<?> bridges = world.select("w[highway][bridge]");
+        Features bridges = world.select("w[highway][bridge]");
 
         map.add(bavaria).color("red");
         map.add(danube).color("blue");
@@ -109,8 +109,8 @@ public class AndFilterTest
     {
         MapMaker map = new MapMaker();
 
-        Features<?> runways = world.select("w[aeroway=runway]");
-        Features<?> airports = world.select("a[aeroway=aerodrome]");
+        Features runways = world.select("w[aeroway=runway]");
+        Features airports = world.select("a[aeroway=aerodrome]");
         final double minLength = 3000;
 
         Set<Feature> suitableRunways = new HashSet<>();
@@ -145,8 +145,8 @@ public class AndFilterTest
         Feature runway = null;
 
         MapMaker map = new MapMaker();
-        Features<?> runways = world.select("w[aeroway=runway]");
-        Features<?> airports = world.select("a[aeroway=aerodrome]");
+        Features runways = world.select("w[aeroway=runway]");
+        Features airports = world.select("a[aeroway=aerodrome]");
 
         for(Feature f: runways)
         {

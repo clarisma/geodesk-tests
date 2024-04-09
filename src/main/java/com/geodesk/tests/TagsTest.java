@@ -36,15 +36,15 @@ public class TagsTest
 
     @Test public void testTagsPerformance()
     {
-        List<Way> streets = world.ways("w[highway]").toList();
+        List<Feature> streets = world.ways("w[highway]").toList();
 
         AtomicLong count2 = new AtomicLong();
         SimpleBenchmark.run("taglookup", 10, () ->
         {
-            for(Way street: streets)
+            for(var street: streets)
             {
                 int crossings = 0;
-                for(Node node: street)
+                for(var node: street)
                 {
                     if (node.hasTag("highway", "crossing") &&
                         (node.hasTag("crossing", "marked") ||
@@ -60,7 +60,7 @@ public class TagsTest
         AtomicLong count = new AtomicLong();
         SimpleBenchmark.run("select", 10, () ->
         {
-            for(Way street: streets)
+            for(var street: streets)
             {
                 count.addAndGet(street.nodes("[highway=crossing][crossing=marked,zebra]").count());
             }
@@ -69,10 +69,10 @@ public class TagsTest
         AtomicLong count3 = new AtomicLong();
         SimpleBenchmark.run("taglookup", 10, () ->
         {
-            for(Way street: streets)
+            for(var street: streets)
             {
                 int crossings = 0;
-                for(Node node: street)
+                for(var node: street)
                 {
                     if (node.hasTag("highway", "crossing"))
                     {

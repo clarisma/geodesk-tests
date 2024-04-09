@@ -16,7 +16,7 @@ import static com.geodesk.feature.Filters.*;
 
 public class EnclosingQueryBenchmark extends QueryBenchmark<Circle>
 {
-    public EnclosingQueryBenchmark(String name, Features<?> features, List<Circle> shapes,
+    public EnclosingQueryBenchmark(String name, Features features, List<Circle> shapes,
         Action action, ExecutorService executor)
     {
         super(name, features, shapes, action, executor);

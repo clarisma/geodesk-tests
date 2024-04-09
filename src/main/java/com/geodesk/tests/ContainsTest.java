@@ -79,7 +79,7 @@ public class ContainsTest
 
     @Test public void testContainsFeature()
     {
-        Features<?> parks = features.select("a[leisure=park][name]");
+        Features parks = features.select("a[leisure=park][name]");
         for(Feature park: parks)
         {
             Log.debug("%s %s is located in:", park, park.stringValue("name"));

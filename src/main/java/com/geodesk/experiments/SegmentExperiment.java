@@ -7,11 +7,10 @@
 
 package com.geodesk.experiments;
 
-import com.geodesk.core.Mercator;
-import com.geodesk.core.XY;
+import com.geodesk.geom.Mercator;
+import com.geodesk.geom.XY;
+import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;
-import com.geodesk.feature.Features;
-import com.geodesk.feature.Way;
 import com.geodesk.feature.store.StoredWay;
 import org.locationtech.jts.geom.LineSegment;
 
@@ -21,12 +20,12 @@ public class SegmentExperiment
 {
     static FeatureLibrary world;
 
-    public static void measureImmutable(Iterable<Way> ways)
+    public static void measureImmutable(Iterable<Feature> ways)
     {
         long start = System.currentTimeMillis();
         double totalDistance = 0;
 
-        for(Way way: ways)
+        for(Feature way: ways)
         {
             StoredWay w = (StoredWay)way;
             StoredWay.XYIterator iter = w.iterXY();
@@ -45,13 +44,13 @@ public class SegmentExperiment
             totalDistance, System.currentTimeMillis() - start);
     }
 
-    public static void measureMutable(Iterable<Way> ways)
+    public static void measureMutable(Iterable<Feature> ways)
     {
         long start = System.currentTimeMillis();
         double totalDistance = 0;
 
         LineSegment seg = new LineSegment();
-        for(Way way: ways)
+        for(Feature way: ways)
         {
             StoredWay w = (StoredWay)way;
             StoredWay.XYIterator iter = w.iterXY();
@@ -74,7 +73,7 @@ public class SegmentExperiment
     public static void main(String[] args)
     {
         world = new FeatureLibrary("c:\\geodesk\\tests\\germany.gol");
-        Iterable<Way> ways = world.ways("a[building]").toList();
+        Iterable<Feature> ways = world.ways("a[building]").toList();
         measureImmutable(ways);
         measureMutable(ways);
         measureImmutable(ways);

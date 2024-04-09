@@ -17,7 +17,7 @@ import static com.geodesk.feature.Filters.*;
 
 public class WithinQueryBenchmark extends QueryBenchmark<Geometry>
 {
-    public WithinQueryBenchmark(String name, Features<?> features, List<Geometry> shapes,
+    public WithinQueryBenchmark(String name, Features features, List<Geometry> shapes,
         Action action, ExecutorService executor)
     {
         super(name, features, shapes, action, executor);

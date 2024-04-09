@@ -8,7 +8,7 @@
 package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
-import com.geodesk.core.Box;
+import com.geodesk.geom.Box;
 import com.geodesk.feature.*;
 import org.eclipse.collections.api.list.primitive.LongList;
 import org.junit.After;
@@ -35,7 +35,7 @@ public class NorthwestTest
             .select("a[boundary=administrative][admin_level=2][name:en=Germany]")
             .in(Box.atLonLat(12.0231, 48.3310))
             .first();
-        Features<?> buildings = world.select("wa[highway]");
+        Features buildings = world.select("wa[highway]");
 
         LongList slow = TestUtils.getSet(buildings.select(Filters.slowIntersects(country)));
         LongList fast = TestUtils.getSet(buildings.select(Filters.intersects(country)));
@@ -47,7 +47,7 @@ public class NorthwestTest
     // Answer: broken geometry, member ways don't connect
     @Test public void whySlowIntersectionFailsToReturnRelation9675374()
     {
-        for(Relation rel : world
+        for(Feature rel : world
             .relations("ra[name='Euskirchener Straße'][type=public_transport]"))
         {
             if(rel.id() == 9675374)
