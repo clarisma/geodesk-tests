@@ -163,16 +163,10 @@ public class ReferentialIntegrityTest
         {
             relCount++;
 
-            if(rel.id() == 9884579)
-            {
-                Log.error("!!!");
-            }
-
             // Box memberBounds = new Box();
 
             for (Feature member : rel.members())
             {
-                if(rel.id() == 9884579) Log.debug("- %s", member);
                 memberCount++;
 
                 // Check referential integrity relation <---> member
@@ -192,6 +186,28 @@ public class ReferentialIntegrityTest
             relCount, memberCount, end - start);
         Log.debug("- %d unique roles", uniqueRoles.size());
         for (String role : COMMON_ROLES) assertTrue(uniqueRoles.contains(role));
+    }
+
+    @Test public void testMembersOf()
+    {
+        Features routes = features.select("r[route=bicycle]");
+        Features primaryRoads = features.select("w[highway=primary]");
+
+        for(Feature route : routes)
+        {
+            Features members1 = route.members("w[highway=primary]");
+            Features members2 = primaryRoads.membersOf(route);
+            for(Feature member : members1)
+            {
+                assert(members2.contains(member));
+                assert(member.parents().contains(route));
+                assert(routes.parentsOf(member).contains(route));
+            }
+            for(Feature member : members2)
+            {
+                assert(members1.contains(member));
+            }
+        }
     }
 
     /**
