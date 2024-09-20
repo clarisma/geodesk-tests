@@ -184,6 +184,18 @@ public class ConcurTest
         return count;
     }
 
+    long relation_member_role_len()
+    {
+        long len = 0;
+        for (var parent: world.relations())
+        {
+            for(var child: parent.members())
+            {
+                len += child.role().length();
+            }
+        }
+        return len;
+    }
 
     public long street_crossing_count()
     {
