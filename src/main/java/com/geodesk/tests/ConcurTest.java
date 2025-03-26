@@ -9,7 +9,7 @@ import java.util.*;
 
 public class ConcurTest
 {
-    Features world = new FeatureLibrary("c:\\geodesk\\tests\\monaco.gol");
+    Features world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
 
     long italian_restaurant_count()
     {
@@ -260,7 +260,7 @@ public class ConcurTest
         return count;
     }
 
-    public long tags_ken_len()
+    public long tags_key_len()
     {
         long totalLen = 0;
         for (var f: world)
@@ -404,7 +404,7 @@ public class ConcurTest
         for (Method method : testMethods)
         {
             long result = (long) method.invoke(test);  // Invoke the method
-            System.out.println("Method: " + method.getName() + ", Result: " + result);
+            System.out.println(method.getName() + "=" + result);
         }
 
         // reportSetDifferences(test.parents, test.parentsOf);
