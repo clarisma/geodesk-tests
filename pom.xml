@@ -4,7 +4,7 @@
 
   <groupId>com.geodesk</groupId>
   <artifactId>geodesk-tests</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <packaging>jar</packaging>
 
   <name>GeoDesk Tests</name>
@@ -21,7 +21,7 @@
   	<dependency>
 		<groupId>com.geodesk</groupId>
   		<artifactId>geodesk</artifactId>
-  		<version>1.0.0</version>
+  		<version>1.0.1</version>
 	</dependency>
 
       <!-- for experiments only -->
