@@ -8,11 +8,11 @@
 package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
+import com.geodesk.feature.filter.SlowWithinFilter;
 import com.geodesk.geom.Box;
 import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
-import com.geodesk.feature.Filters;
 import com.geodesk.util.MapMaker;
 import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
@@ -130,7 +130,7 @@ public class SpatialFilterTest
                 Features places = world.select("a[building]");
                 long count = 0; // places.in(Box.of(bavariaPoly)).count();
 
-                for (Feature place : places.select(Filters.slowWithin(bavariaPrepared)))
+                for (Feature place : places.select(new SlowWithinFilter(bavariaPrepared)))
                 {
                     count++;
                 }
@@ -294,7 +294,7 @@ public class SpatialFilterTest
                 cityCount++;
                 long cityBuildingCount = world
                     .select("a[building]")
-                    .select(Filters.slowWithin(city))
+                    .select(new SlowWithinFilter(city.toGeometry()))
                     .count();
                 if(cityBuildingCount > mostBuildings)
                 {
@@ -330,7 +330,7 @@ public class SpatialFilterTest
                 cityCount++;
                 long cityChurchCount = world
                     .select("na[amenity=place_of_worship][religion=christian]")
-                    .select(Filters.slowWithin(city))
+                    .select(new SlowWithinFilter(city.toGeometry()))
                     .count();
                 if(cityChurchCount > mostChurches)
                 {

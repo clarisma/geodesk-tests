@@ -14,9 +14,7 @@ public class TestFeatureStore extends FeatureStore
 {
     public TestFeatureStore(Path path)
     {
-        setPath(path);
-        open();
-        enableQueries();
+        super(path);
     }
 
     public ByteBuffer baseMapping()
@@ -24,10 +22,12 @@ public class TestFeatureStore extends FeatureStore
         return baseMapping;
     }
 
+    /*
     public int tileIndexPointer()
     {
         return super.tileIndexPointer();
     }
+     */
 
     public int zoomLevels()
     {

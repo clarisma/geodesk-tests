@@ -11,7 +11,6 @@ import com.clarisma.common.util.Log;
 import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
-import com.geodesk.feature.Filters;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,7 +38,7 @@ public class ContainsTest
         Map<String,Boolean> present = new HashMap<>(names.length);
         for(String name: names) present.put(name, false);
 
-        for (Feature f : features.select("a").select(Filters.containsLonLat(lon, lat)))
+        for (Feature f : features.select("a").containingLonLat(lon, lat))
         {
             // Log.debug("- %s %s", f, f.stringValue("name"));
             String name = f.stringValue("name");
@@ -83,7 +82,7 @@ public class ContainsTest
         for(Feature park: parks)
         {
             Log.debug("%s %s is located in:", park, park.stringValue("name"));
-            for(Feature f: features.select(Filters.contains(park)).select("nw"))
+            for(Feature f: features.containing(park).select("nw"))
             {
                 Log.debug("- %s: %s %s", f, TestUtils.primaryTag(f), f.stringValue("name"));
             }

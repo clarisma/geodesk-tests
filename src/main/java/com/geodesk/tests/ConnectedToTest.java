@@ -22,7 +22,6 @@ import org.locationtech.jts.geom.Geometry;
 
 import java.util.List;
 
-import static com.geodesk.feature.Filters.*;
 
 public class ConnectedToTest
 {
@@ -46,7 +45,7 @@ public class ConnectedToTest
 
         for(Feature f: world
             .select("r[route=bicycle]")
-            .select(connectedTo(route)))
+            .connectedTo(route))
         {
             Log.debug("- %s %s", f, f.stringValue("name"));
         }

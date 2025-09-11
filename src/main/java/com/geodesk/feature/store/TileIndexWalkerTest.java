@@ -36,7 +36,7 @@ public class TileIndexWalkerTest
     {
         Log.debug("Bounds: %s", bounds);
         TileIndexWalker walker = new TileIndexWalker(
-            features.baseMapping(), features.tileIndexPointer(),
+            features.tileIndexBuf(), features.tileIndexOfs(),
             features.zoomLevels());
         walker.start(bounds);
         while(walker.next())

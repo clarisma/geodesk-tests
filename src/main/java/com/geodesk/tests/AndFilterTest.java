@@ -9,6 +9,8 @@ package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
 import com.geodesk.benchmark.BridgesBenchmark;
+import com.geodesk.feature.filter.IntersectsFilter;
+import com.geodesk.feature.filter.WithinFilter;
 import com.geodesk.geom.Box;
 import com.geodesk.geom.Tile;
 import com.geodesk.feature.*;
@@ -58,8 +60,8 @@ public class AndFilterTest
         map.add(danube).color("blue");
 
         for (Feature bridge : bridges
-            .select(Filters.intersects(bavaria))
-            .select(Filters.intersects(danube)))
+            .intersecting(bavaria)
+            .intersecting(danube))
         {
             map.add(bridge).color("orange");
         }
@@ -84,8 +86,8 @@ public class AndFilterTest
 
         TileIndexWalker walker = new TileIndexWalker(world.store());
         Filter filter = AndFilter.create(
-            Filters.within(bavaria),
-            Filters.intersects(danube));
+            new WithinFilter(bavaria),
+            new IntersectsFilter(danube));
 
         map.add(filter.bounds()).color("orange");
         walker.start(filter.bounds(), filter);
@@ -123,7 +125,7 @@ public class AndFilterTest
             if(len == 0) len = runway.length();
             if (len >= minLength)
             {
-                Feature airport = airports.select(Filters.intersects(runway)).first();
+                Feature airport = airports.intersecting(runway).first();
                 if (airport == null)
                 {
                     Log.debug("Runway %s is not within an airport", runway);
@@ -158,7 +160,7 @@ public class AndFilterTest
         }
 
         TileIndexWalker walker = new TileIndexWalker(world.store());
-        Filter filter = Filters.intersects(runway);
+        Filter filter = new IntersectsFilter(runway);
         walker.start(filter.bounds(), filter);
         map.add(filter.bounds()).color("orange");
         while (walker.next())

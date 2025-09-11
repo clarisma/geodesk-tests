@@ -22,7 +22,7 @@ public class FilterTest
             Log.debug("%s %s %s connects to:", street,
                 street.stringValue("highway"),
                 street.stringValue("name"));
-            for(Feature connected: streets.select(Filters.connectedTo(street)))
+            for(Feature connected: streets.connectedTo(street))
             {
                 Log.debug("- %s %s %s", connected,
                     connected.stringValue("highway"),

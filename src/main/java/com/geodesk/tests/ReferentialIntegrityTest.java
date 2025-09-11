@@ -41,7 +41,7 @@ public class ReferentialIntegrityTest
     @Before
     public void setUp()
     {
-        features = new FeatureLibrary(TestSettings.golFile(), TestSettings.tileURL());
+        features = new FeatureLibrary(TestSettings.golFile());
 
 
         /*

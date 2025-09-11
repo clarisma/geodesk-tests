@@ -14,7 +14,8 @@ public class TestSettings
     public static String golFile()
     {
         // return "c:\\geodesk\\tests\\w2.gol";
-        return "c:\\geodesk\\tests\\de-good2.gol";
+        // return "c:\\geodesk\\tests\\de-good2.gol";
+        return "c:\\geodesk\\tests\\fr-libero6.gol";
         // return "/home/md/geodesk/tests/w2.gol";
         // return "c:\\geodesk\\tests\\de-from-world.gol";
         // return "c:\\geodesk\\tests\\de6.gol";

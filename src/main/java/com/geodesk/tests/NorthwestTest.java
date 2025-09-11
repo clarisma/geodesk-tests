@@ -8,6 +8,7 @@
 package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
+import com.geodesk.feature.filter.SlowIntersectsFilter;
 import com.geodesk.geom.Box;
 import com.geodesk.feature.*;
 import org.eclipse.collections.api.list.primitive.LongList;
@@ -37,8 +38,8 @@ public class NorthwestTest
             .first();
         Features buildings = world.select("wa[highway]");
 
-        LongList slow = TestUtils.getSet(buildings.select(Filters.slowIntersects(country)));
-        LongList fast = TestUtils.getSet(buildings.select(Filters.intersects(country)));
+        LongList slow = TestUtils.getSet(buildings.select(new SlowIntersectsFilter(country.toGeometry())));
+        LongList fast = TestUtils.getSet(buildings.intersecting(country));
 
         TestUtils.checkNoDupes("intersects-fast", fast);
         TestUtils.compareSets("intersects-slow", slow, "intersects-fast", fast);

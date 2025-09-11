@@ -9,6 +9,7 @@ package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
 import com.geodesk.feature.*;
+import com.geodesk.feature.filter.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,12 +75,12 @@ public class SpatialRelationTest
     {
         Filter filter = switch(name)
         {
-            case "coveredBy" -> Filters.coveredBy(test);
-            case "crosses" -> Filters.crosses(test);
-            case "intersects" -> Filters.intersects(test);
-            case "overlaps" -> Filters.overlaps(test);
-            case "touches" -> Filters.touches(test);
-            case "within" -> Filters.within(test);
+            case "coveredBy" -> new CoveredByFilter(test);
+            case "crosses" -> new CrossesFilter(test);
+            case "intersects" -> new IntersectsFilter(test);
+            case "overlaps" -> new OverlapsFilter(test);
+            case "touches" -> new TouchesFilter(test);
+            case "within" -> new WithinFilter(test);
             default -> null;
         };
 

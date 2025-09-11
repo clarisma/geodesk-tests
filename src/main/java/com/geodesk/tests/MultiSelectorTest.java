@@ -21,7 +21,7 @@ public class MultiSelectorTest
 
     @Before public void setUp()
     {
-        world = new FeatureLibrary(TestSettings.golFile(), TestSettings.tileURL());
+        world = new FeatureLibrary(TestSettings.golFile());
     }
 
     @After public void tearDown()

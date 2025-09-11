@@ -9,15 +9,13 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.geodesk.feature.Filters.*;
-
 public class MapMakerTest
 {
     FeatureLibrary features;
 
     @Before public void setUp()
     {
-        features = new FeatureLibrary("c:\\geodesk\\tests\\world.gol");
+        features = new FeatureLibrary("c:\\geodesk\\tests\\fr-libero6.gol");
     }
 
     @After public void tearDown()
@@ -32,7 +30,7 @@ public class MapMakerTest
 
         map.add(features
             .select("a[boundary=administrative][admin_level=6]")
-            .select(within(france)));
+            .within(france));
         map.save(TestSettings.outputPath().resolve("france.html").toString());
     }
 }

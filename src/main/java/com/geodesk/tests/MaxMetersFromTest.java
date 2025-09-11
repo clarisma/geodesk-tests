@@ -15,15 +15,13 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.geodesk.feature.Filters.*;
-
 public class MaxMetersFromTest
 {
     FeatureLibrary features;
 
     @Before public void setUp()
     {
-        features = new FeatureLibrary(TestSettings.golFile(), TestSettings.tileURL());
+        features = new FeatureLibrary(TestSettings.golFile());
     }
 
     @After public void tearDown()
@@ -36,7 +34,7 @@ public class MaxMetersFromTest
         MapMaker map = new MapMaker();
         map.add(features
             .select("a[building]")
-            .select(maxMetersFromLonLat(500, 11.078, 49.454)));
+            .maxMetersFromLonLat(500, 11.078, 49.454));
         map.save(TestSettings.outputPath().resolve("max-meters.html").toString());
     }
 }

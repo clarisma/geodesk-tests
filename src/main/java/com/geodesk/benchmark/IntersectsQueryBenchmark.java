@@ -8,7 +8,6 @@
 package com.geodesk.benchmark;
 
 import com.geodesk.feature.Features;
-import static com.geodesk.feature.Filters.*;
 
 import org.locationtech.jts.geom.Geometry;
 
@@ -25,6 +24,6 @@ public class IntersectsQueryBenchmark extends QueryBenchmark<Geometry>
 
     @Override void performSingle(Geometry geom, Result res)
     {
-        action.perform(features.select(intersects(geom)), res);
+        action.perform(features.intersecting(geom), res);
     }
 }
