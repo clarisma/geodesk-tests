@@ -31,6 +31,20 @@ public class MapMakerTest
         map.add(features
             .select("a[boundary=administrative][admin_level=6]")
             .within(france));
+
+
         map.save(TestSettings.outputPath().resolve("france.html").toString());
+    }
+
+    @Test public void testFrance2() throws IOException
+    {
+        Feature france = features.select("a[boundary=administrative][admin_level=2][name=France]").first();
+        MapMaker map = new MapMaker();
+
+        map.add(features
+            .select("n[place=city,town]")
+            .within(france));
+
+        map.save(TestSettings.outputPath().resolve("france2.html").toString());
     }
 }

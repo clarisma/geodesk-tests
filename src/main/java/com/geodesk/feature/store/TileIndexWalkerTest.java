@@ -23,7 +23,7 @@ public class TileIndexWalkerTest
     @Before
     public void setUp() throws Exception
     {
-        features = new TestFeatureStore(Path.of("c:\\geodesk\\tests\\de.gol"));
+        features = new TestFeatureStore(Path.of("c:\\geodesk\\tests\\liguria-libero4.gol"));
     }
 
     @Test
@@ -39,11 +39,12 @@ public class TileIndexWalkerTest
             features.tileIndexBuf(), features.tileIndexOfs(),
             features.zoomLevels());
         walker.start(bounds);
-        while(walker.next())
+        do
         {
             int tile = walker.tile();
-            Log.debug(Tile.toString(tile));
+            Log.debug("%06X: %s", walker.tip(), Tile.toString(tile));
         }
+        while(walker.next());
     }
 
     @Test

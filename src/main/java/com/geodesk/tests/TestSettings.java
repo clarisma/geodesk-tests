@@ -15,7 +15,7 @@ public class TestSettings
     {
         // return "c:\\geodesk\\tests\\w2.gol";
         // return "c:\\geodesk\\tests\\de-good2.gol";
-        return "c:\\geodesk\\tests\\fr-libero6.gol";
+        return "c:\\geodesk\\tests\\de-libero.gol";
         // return "/home/md/geodesk/tests/w2.gol";
         // return "c:\\geodesk\\tests\\de-from-world.gol";
         // return "c:\\geodesk\\tests\\de6.gol";
