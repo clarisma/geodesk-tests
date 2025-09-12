@@ -17,7 +17,7 @@ public class MapMakerTest
 
     @Before public void setUp()
     {
-        features = new FeatureLibrary("c:\\geodesk\\tests\\world.gol");
+        features = new FeatureLibrary("d:\\geodesk\\tests\\w-good.gol");
     }
 
     @After public void tearDown()
