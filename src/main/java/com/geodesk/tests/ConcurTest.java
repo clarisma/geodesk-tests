@@ -9,7 +9,7 @@ import java.util.*;
 
 public class ConcurTest
 {
-    Features world = new FeatureLibrary("c:\\geodesk\\tests\\lig-good.gol");
+    Features world = new FeatureLibrary("c:\\geodesk\\tests\\liguria-libero4.gol");
 
     long italian_restaurant_count()
     {
