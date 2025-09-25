@@ -49,7 +49,6 @@ public class SpatialRelationTest
             {
                 if(member instanceof Node) nodes++;
                 if(member instanceof Way) ways++;
-                if(member.isPlaceholder()) placeholders++;
             }
             if(nodes > mostNodes && ways > mostWays && placeholders > mostPlaceholders)
             {
