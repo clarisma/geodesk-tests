@@ -65,8 +65,7 @@ public class IntersectsTest
         for(Feature state: states)
         {
             Log.debug("- %s", state.stringValue("name"));
-            LongList inState = getFeatures(restaurants.select(
-                new SlowIntersectsFilter(state.toGeometry())));
+            LongList inState = getFeatures(restaurants.select(new SlowIntersectsFilter(state.toGeometry())));
             inStates.addAll(inState);
         }
 

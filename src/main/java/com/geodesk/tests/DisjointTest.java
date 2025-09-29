@@ -44,7 +44,8 @@ public class DisjointTest
 
         map.add(bavaria).color("red");
 
-        Features riversOutsideBavaria = rivers.disjoint(bavaria);
+        Features riversOutsideBavaria = rivers
+            .disjoint(bavaria);
 
         TestUtils.checkNoDupes("rivers-outside-bavaria", TestUtils.getSet(riversOutsideBavaria));
 
@@ -84,7 +85,7 @@ public class DisjointTest
         map.add(bavaria).color("red");
 
         TileIndexWalker walker = new TileIndexWalker(world.store());
-        Filter filter = new DisjointFilter(bavaria.toGeometry());
+        Filter filter = new DisjointFilter(bavaria);
 
         map.add(filter.bounds()).color("orange");
         walker.start(Box.ofWorld(), filter);

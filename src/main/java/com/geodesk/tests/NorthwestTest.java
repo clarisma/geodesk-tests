@@ -22,7 +22,7 @@ public class NorthwestTest
 
     @Before public void setUp()
     {
-        world = new FeatureLibrary("c:\\geodesk\\tests\\germany.gol");
+        world = Features.open(TestSettings.golFile());
     }
 
     @After public void tearDown()

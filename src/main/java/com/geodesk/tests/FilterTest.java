@@ -15,7 +15,7 @@ public class FilterTest
 {
     @Test public void testConnectedStreets() throws Exception
     {
-        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        FeatureLibrary world = Features.open(TestSettings.golFile());
         Features streets = world.ways("w[highway]");
         for(Feature street: streets)
         {

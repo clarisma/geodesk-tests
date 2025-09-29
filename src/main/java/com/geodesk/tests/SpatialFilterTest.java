@@ -34,7 +34,7 @@ public class SpatialFilterTest
     @Test public void testSpatial()
     {
         long start = System.currentTimeMillis();
-        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        FeatureLibrary world = Features.open(TestSettings.golFile());
         Feature bavaria = world
             .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
@@ -82,7 +82,7 @@ public class SpatialFilterTest
     @Test public void testSpatialBuildings()
     {
         long start = System.currentTimeMillis();
-        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        FeatureLibrary world = Features.open(TestSettings.golFile());
         Feature bavaria = world
             .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
@@ -114,7 +114,7 @@ public class SpatialFilterTest
     @Test public void testSpatialBuildingsFilter()
     {
         long start = System.currentTimeMillis();
-        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        FeatureLibrary world = Features.open(TestSettings.golFile());
         Feature bavaria = world
             .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
@@ -150,7 +150,7 @@ public class SpatialFilterTest
     @Test public void testSpatialBuildingsBbox()
     {
         long start = System.currentTimeMillis();
-        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        FeatureLibrary world = Features.open(TestSettings.golFile());
         Feature bavaria = world
             .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
@@ -180,7 +180,7 @@ public class SpatialFilterTest
     @Test public void testSpatialStates() throws IOException
     {
         long start = System.currentTimeMillis();
-        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        FeatureLibrary world = Features.open(TestSettings.golFile());
         Feature germany = world
             .select("a[boundary=administrative][admin_level=2][name:en=Germany]")
             .in(Box.atLonLat(12.0231, 48.3310))

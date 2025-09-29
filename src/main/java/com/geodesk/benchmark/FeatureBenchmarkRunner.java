@@ -40,7 +40,7 @@ public class FeatureBenchmarkRunner extends BenchmarkRunner
 
     @Override protected void setUp() throws IOException
     {
-        world = new FeatureLibrary("c:\\geodesk\\tests\\de3.gol");
+        world = new FeatureLibrary("d:\\geodesk\\tests\\de-v1.gol");
         try
         {
             plan = new BenchmarkPlan(rootPath, "benchmarks/new-benchmark.fab", world);
@@ -113,7 +113,7 @@ public class FeatureBenchmarkRunner extends BenchmarkRunner
 
     public static void main(String[] args) throws Exception
     {
-        BenchmarkRunner runner = new FeatureBenchmarkRunner(Path.of("c:\\geodesk\\benchmarks-new"), 5);
+        BenchmarkRunner runner = new FeatureBenchmarkRunner(Path.of("d:\\geodesk\\benchmarks-new"), 5);
         runner.run();
     }
 }

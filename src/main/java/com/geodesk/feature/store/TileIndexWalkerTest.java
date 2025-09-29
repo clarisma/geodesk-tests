@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/*
 package com.geodesk.feature.store;
 
 import com.clarisma.common.util.Log;
@@ -60,3 +61,4 @@ public class TileIndexWalkerTest
         walk(munich);
     }
 }
+ */

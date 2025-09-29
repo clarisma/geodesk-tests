@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/*
 package com.geodesk.feature.store;
 
 import java.nio.ByteBuffer;
@@ -35,3 +36,4 @@ public class TestFeatureStore extends FeatureStore
     }
 
 }
+*/

@@ -50,11 +50,10 @@ public class SpatialRelationTest
                 if(member instanceof Node) nodes++;
                 if(member instanceof Way) ways++;
             }
-            if(nodes > mostNodes && ways > mostWays && placeholders > mostPlaceholders)
+            if(nodes > mostNodes && ways > mostWays)
             {
                 mostNodes = nodes;
                 mostWays = ways;
-                mostPlaceholders = placeholders;
                 trickiestRelation = rel;
             }
         }

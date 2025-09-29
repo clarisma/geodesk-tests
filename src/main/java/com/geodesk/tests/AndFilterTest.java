@@ -160,7 +160,7 @@ public class AndFilterTest
         }
 
         TileIndexWalker walker = new TileIndexWalker(world.store());
-        Filter filter = new IntersectsFilter(runway);
+        Filter filter = new IntersectsFilter(runway.toGeometry());
         walker.start(filter.bounds(), filter);
         map.add(filter.bounds()).color("orange");
         while (walker.next())

@@ -22,6 +22,7 @@ import org.locationtech.jts.geom.Geometry;
 
 import java.util.List;
 
+import com.geodesk.tests.TestSettings;
 
 public class ConnectedToTest
 {
