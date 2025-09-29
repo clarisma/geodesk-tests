@@ -113,7 +113,7 @@ public class NodeCoordinatesTest extends AbstractFeatureTest
 
         void check(String fileName) throws IOException
         {
-            Log.debug("Checking %s against original %s", world.store().path(), ORIGINAL_OSM_PBF);
+            // Log.debug("Checking %s against original %s", world.store().path(), ORIGINAL_OSM_PBF);
             Path pbfFile = Path.of(ORIGINAL_OSM_PBF);
             long fileSize = Files.size(pbfFile);
             progress = new ProgressReporter(fileSize, "bytes",

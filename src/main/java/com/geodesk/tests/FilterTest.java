@@ -15,14 +15,14 @@ public class FilterTest
 {
     @Test public void testConnectedStreets() throws Exception
     {
-        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        FeatureLibrary world = Features.open(TestSettings.golFile());
         Features streets = world.ways("w[highway]");
         for(Feature street: streets)
         {
             Log.debug("%s %s %s connects to:", street,
                 street.stringValue("highway"),
                 street.stringValue("name"));
-            for(Feature connected: streets.select(Filters.connectedTo(street)))
+            for(Feature connected: streets.connectedTo(street))
             {
                 Log.debug("- %s %s %s", connected,
                     connected.stringValue("highway"),

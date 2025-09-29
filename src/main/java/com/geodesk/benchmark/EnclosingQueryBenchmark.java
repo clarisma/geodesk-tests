@@ -12,8 +12,6 @@ import com.geodesk.feature.Features;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import static com.geodesk.feature.Filters.*;
-
 public class EnclosingQueryBenchmark extends QueryBenchmark<Circle>
 {
     public EnclosingQueryBenchmark(String name, Features features, List<Circle> shapes,
@@ -24,6 +22,6 @@ public class EnclosingQueryBenchmark extends QueryBenchmark<Circle>
 
     @Override void performSingle(Circle circle, Result res)
     {
-        action.perform(features.select(containsXY(circle.x, circle.y)), res);
+        action.perform(features.containingXY(circle.x, circle.y), res);
     }
 }

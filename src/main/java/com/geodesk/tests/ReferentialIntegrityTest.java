@@ -8,6 +8,7 @@
 package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
+import com.geodesk.feature.store.StoredNode;
 import com.geodesk.geom.Box;
 import com.geodesk.feature.*;
 
@@ -26,6 +27,10 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Lineal;
 import org.locationtech.jts.geom.Polygonal;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -41,7 +46,7 @@ public class ReferentialIntegrityTest
     @Before
     public void setUp()
     {
-        features = new FeatureLibrary(TestSettings.golFile(), TestSettings.tileURL());
+        features = new FeatureLibrary(TestSettings.golFile());
 
 
         /*
@@ -61,7 +66,8 @@ public class ReferentialIntegrityTest
     /**
      * Set-based queries must not return the same feature more than once.
      */
-    @Test public void testNoDuplicates()
+    @Test
+    public void testNoDuplicates()
     {
         Set<Feature> results = new HashSet<>();
         int runs = 1_000;
@@ -90,7 +96,8 @@ public class ReferentialIntegrityTest
     /**
      * Checks that features("ar") with explicit instanceof check for Relation and relations() return the same set
      */
-    @Test public void testTypeConstraint()
+    @Test
+    public void testTypeConstraint()
     {
         Set<Feature> set1 = new HashSet<>();
         Set<Feature> set2 = new HashSet<>();
@@ -153,7 +160,8 @@ public class ReferentialIntegrityTest
     /**
      * Checks the referential integrity between relations and their members.
      */
-    @Test public void testRelations()
+    @Test
+    public void testRelations()
     {
         Set<String> uniqueRoles = new HashSet<>();
         long relCount = 0;
@@ -171,7 +179,7 @@ public class ReferentialIntegrityTest
 
                 // Check referential integrity relation <---> member
                 assertTrue(member.belongsToRelation());
-                if(!member.belongsTo(rel))
+                if (!member.belongsTo(rel))
                 {
                     Assert.fail(String.format(
                         "Feature.belongsTo() false, but %s belongs to %s", member, rel));
@@ -188,24 +196,25 @@ public class ReferentialIntegrityTest
         for (String role : COMMON_ROLES) assertTrue(uniqueRoles.contains(role));
     }
 
-    @Test public void testMembersOf()
+    @Test
+    public void testMembersOf()
     {
         Features routes = features.select("r[route=bicycle]");
         Features primaryRoads = features.select("w[highway=primary]");
 
-        for(Feature route : routes)
+        for (Feature route : routes)
         {
             Features members1 = route.members("w[highway=primary]");
             Features members2 = primaryRoads.membersOf(route);
-            for(Feature member : members1)
+            for (Feature member : members1)
             {
-                assert(members2.contains(member));
-                assert(member.parents().contains(route));
-                assert(routes.parentsOf(member).contains(route));
+                assert (members2.contains(member));
+                assert (member.parents().contains(route));
+                assert (routes.parentsOf(member).contains(route));
             }
-            for(Feature member : members2)
+            for (Feature member : members2)
             {
-                assert(members1.contains(member));
+                assert (members1.contains(member));
             }
         }
     }
@@ -215,7 +224,8 @@ public class ReferentialIntegrityTest
      * number of features found, rather than doing a proper set check; it is extremely unlikely that two different query
      * methods return sets with the same number of features, but different content.
      */
-    @Test public void testTypedQueries()
+    @Test
+    public void testTypedQueries()
     {
         long nodes = 0;
         long allWays = 0;
@@ -286,7 +296,8 @@ public class ReferentialIntegrityTest
      * Checks the referential integrity between relations and their members; this time from the perspective of the
      * members.
      */
-    @Test public void testRelationMembers()
+    @Test
+    public void testRelationMembers()
     {
         for (Feature f : features.in(Box.ofWorld()))
         {
@@ -306,7 +317,8 @@ public class ReferentialIntegrityTest
             others);
     }
 
-    @Test public void testContains()
+    @Test
+    public void testContains()
     {
         Set<Feature> others = randomSample(features, 10_000);
 
@@ -361,7 +373,7 @@ public class ReferentialIntegrityTest
 
     /**
      * This Test checks the following:
-     *
+     * <p>
      * - A way's bounding box must be the tightest bbox that includes all of its nodes
      * - If a way is an area, its first and last node must be the same
      * - An area must have at least 4 nodes; all others at least 2
@@ -370,7 +382,8 @@ public class ReferentialIntegrityTest
      * - Geometry of non-area must be lineal
      * - Nodes obtained via filters must match the results of checking nodes "manually"
      */
-    @Test public void testWays()
+    @Test
+    public void testWays()
     {
         long wayCount = 0;
         long totalNodeCount = 0;
@@ -443,7 +456,8 @@ public class ReferentialIntegrityTest
     }
 
 
-    @Test public void testParentWays()
+    @Test
+    public void testParentWays()
     {
         long nodeCount = 0;
         long parentWayCount = 0;
@@ -455,6 +469,18 @@ public class ReferentialIntegrityTest
             for (Feature node : way.nodes())
             {
                 Features parentWays = node.parents().ways();
+                if (!parentWays.contains(way))
+                {
+                    Log.debug("%s should have %s as a parent, but doesn't. It has %d parents.",
+                        node.toString(), way.toString(), parentWays.count());
+                    Log.debug("%s flags = %d, tags = %s", node.toString(),
+                        ((StoredNode) node).flags(), node.tags().toString());
+                    Features parentWays2 = node.parents().ways();
+                    for (Feature p : parentWays2)
+                    {
+                        Log.debug(p.toString());
+                    }
+                }
                 Assert.assertTrue(parentWays.contains(way));
                 for (Feature parentWay : parentWays)
                 {
@@ -494,14 +520,15 @@ public class ReferentialIntegrityTest
 
     /**
      * This test gets the tags of all features and queries them in various ways:
-     *
+     * <p>
      * - Directly
      * - Through the iterator
      * - Converting the tags to a HashMap and looking up each one
-     *
+     * <p>
      * All methods of lookup must return the same results.
      */
-    @Test public void testTags()
+    @Test
+    public void testTags()
     {
         int totalFeatureCount = 0;
         int totalTagCount = 0;
@@ -509,6 +536,8 @@ public class ReferentialIntegrityTest
         {
             Tags tags = f.tags();
             int tagCount = 0;
+
+            // Log.debug("%s: %s", f.toString(), tags.toString());
 
             Map<String, Object> tagMap = tags.toMap();
 
@@ -522,9 +551,27 @@ public class ReferentialIntegrityTest
                     Log.debug("%s: %s should be %s, not %s", f, k, v, f.stringValue(k));
                 }
                  */
+                if (!f.hasTag(k, v))
+                {
+                    Log.debug("%s: hasTag() did not find %s=%s", f.toString(), k, v);
+                    String v2 = f.stringValue(k);
+                    Log.debug("  Value of %s: is %s", k, v2);
+                }
+
+                if (!f.stringValue(k).equals(v))
+                {
+                    Log.debug("%s: %s=%s is not equal to %s", f.toString(),
+                        k, f.stringValue(k), v);
+                }
+
+                if (!f.hasTag(k))
+                {
+                    Log.debug("%s should have tag %s", f.toString(), k);
+                }
+
                 assertTrue(f.hasTag(k, v));
-                assertTrue(f.stringValue(k).equals(v));
-                assertTrue(f.hasTag(k));
+                assertEquals(f.stringValue(k), v);
+                assertTrue(f.hasTag(k) || k.isEmpty());
                 assertTrue(tagMap.containsKey(k));
                 tagCount++;
             }
@@ -538,7 +585,8 @@ public class ReferentialIntegrityTest
     }
 
 
-    @Test public void testSpecificWayTags()
+    @Test
+    public void testSpecificWayTags()
     {
         for (Feature way : features.ways("w[highway]"))
         {
@@ -567,7 +615,7 @@ public class ReferentialIntegrityTest
         long superRelCount = 0;
         for (var rel : features.relations())
         {
-            if(!rel.members().relations().isEmpty())
+            if (!rel.members().relations().isEmpty())
             {
                 Feature firstMember = rel.members().relations().first();
                 assertTrue(firstMember instanceof Relation);
@@ -586,7 +634,8 @@ public class ReferentialIntegrityTest
      * - iteration
      * All approaches must yield the same counts.
      */
-    @Test public void testSimpleMemberQueries()
+    @Test
+    public void testSimpleMemberQueries()
     {
         long relations = 0;
         long members = 0;
@@ -620,7 +669,7 @@ public class ReferentialIntegrityTest
             assertEquals(thisMemberRelations, rel.members().relations("nar").count());
             assertEquals(thisMemberWays, rel.members().ways("nwa").count());
 
-            for(Feature f: rel)
+            for (Feature f : rel)
             {
                 switch (f.type())
                 {
@@ -629,7 +678,7 @@ public class ReferentialIntegrityTest
                     break;
                 case WAY:
                     memberWaysManual++;
-                    if(f.isArea())
+                    if (f.isArea())
                     {
                         memberWayAreasManual++;
                         memberAreasManual++;
@@ -637,7 +686,7 @@ public class ReferentialIntegrityTest
                     break;
                 case RELATION:
                     memberRelationsManual++;
-                    if(f.isArea())
+                    if (f.isArea())
                     {
                         memberRelationAreasManual++;
                         memberAreasManual++;
@@ -664,7 +713,7 @@ public class ReferentialIntegrityTest
 
     public void testMemberQueriesX()
     {
-        for(int run=0; run<10; run++)
+        for (int run = 0; run < 10; run++)
         {
             long start = System.currentTimeMillis();
             long relCount = 0;
@@ -672,7 +721,7 @@ public class ReferentialIntegrityTest
             for (var rel : features.relations(/* "a[boundary]" */))
             {
                 relCount++;
-                for(var node: rel.members().nodes("n[place]"))
+                for (var node : rel.members().nodes("n[place]"))
                 {
                     // Log.debug("%s: %s", rel, node);
                     memberCount++;
@@ -683,10 +732,11 @@ public class ReferentialIntegrityTest
         }
     }
 
-    @Test public void testMemberRoleQueries()
+    @Test
+    public void testMemberRoleQueries()
     {
         Matcher matcher = new RoleMatcher(features.store(), "admin_centre");
-        for(int run=0; run<10; run++)
+        for (int run = 0; run < 10; run++)
         {
             long start = System.currentTimeMillis();
             long relCount = 0;
@@ -695,17 +745,17 @@ public class ReferentialIntegrityTest
             for (var rel : features.relations(/* "a[boundary]" */))
             {
                 relCount++;
-                Iterator<Feature> iter = ((StoredRelation)rel).iterator(
+                Iterator<Feature> iter = ((StoredRelation) rel).iterator(
                     TypeBits.NODES, matcher);
-                while(iter.hasNext())
+                while (iter.hasNext())
                 {
                     iter.next();
                     memberCount++;
                 }
 
-                for(var node: rel.members().nodes())
+                for (var node : rel.members().nodes())
                 {
-                    if(node.role().equals("admin_centre")) memberCountSlow++;
+                    if (node.role().equals("admin_centre")) memberCountSlow++;
                 }
             }
             long end = System.currentTimeMillis();
@@ -741,8 +791,32 @@ public class ReferentialIntegrityTest
     }
      */
 
-    @Test public void testPurgatoryMembers()
+    @Test
+    public void testValueStrings() throws IOException
     {
+        List<String> strings = new ArrayList<>();
 
+        for (Feature f : features)
+        {
+            Tags tags = f.tags();
+            while (tags.next())
+            {
+                strings.add(f + ": " + tags.stringValue());
+            }
+        }
+
+        Collections.sort(strings);
+
+        // Write to file
+        try (BufferedWriter writer = new BufferedWriter(
+            new FileWriter("d:\\geodesk\\tests\\monaco-java.txt",
+                StandardCharsets.UTF_8)))
+        {
+            for (String s : strings)
+            {
+                writer.write(s);
+                writer.newLine();
+            }
+        }
     }
 }

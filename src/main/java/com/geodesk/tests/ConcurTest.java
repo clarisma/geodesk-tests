@@ -9,7 +9,7 @@ import java.util.*;
 
 public class ConcurTest
 {
-    Features world = new FeatureLibrary("c:\\geodesk\\tests\\liguria-good.gol");
+    Features world = new FeatureLibrary("d:\\geodesk\\tests\\monaco.gol");
 
     long italian_restaurant_count()
     {
@@ -296,7 +296,7 @@ public class ConcurTest
             Tags tags = f.tags();
             while(tags.next())
             {
-                sum += tags.intValue();
+                sum += tags.longValue();
             }
         }
         return sum;

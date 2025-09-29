@@ -12,9 +12,9 @@ import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureId;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
-import static com.geodesk.feature.Filters.*;
 import static com.geodesk.tests.TestUtils.*;
 
+import com.geodesk.feature.filter.SlowWithinFilter;
 import org.eclipse.collections.api.list.primitive.LongList;
 import org.eclipse.collections.api.list.primitive.MutableLongList;
 import org.eclipse.collections.impl.list.mutable.primitive.LongArrayList;
@@ -45,8 +45,8 @@ public class WithinTest
             .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .first().toGeometry();
         Features highways = world.select("w[highway]");
-        LongList slow = getSet(highways.select(slowWithin(bavaria)));
-        LongList fast = getSet(highways.select(within(bavaria)));
+        LongList slow = getSet(highways.select(new SlowWithinFilter(bavaria)));
+        LongList fast = getSet(highways.within(bavaria));
         checkNoDupes("fast", fast);
         compareSets("slow", slow, "fast", fast);
     }

@@ -13,8 +13,6 @@ import org.locationtech.jts.geom.Geometry;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import static com.geodesk.feature.Filters.*;
-
 public class WithinQueryBenchmark extends QueryBenchmark<Geometry>
 {
     public WithinQueryBenchmark(String name, Features features, List<Geometry> shapes,
@@ -25,6 +23,6 @@ public class WithinQueryBenchmark extends QueryBenchmark<Geometry>
 
     @Override void performSingle(Geometry geom, Result res)
     {
-        action.perform(features.select(within(geom)), res);
+        action.perform(features.within(geom), res);
     }
 }

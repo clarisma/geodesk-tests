@@ -7,6 +7,7 @@
 
 package com.geodesk.tests;
 
+import com.geodesk.feature.filter.DisjointFilter;
 import com.geodesk.geom.Box;
 import com.geodesk.geom.Tile;
 import com.geodesk.feature.*;
@@ -44,7 +45,7 @@ public class DisjointTest
         map.add(bavaria).color("red");
 
         Features riversOutsideBavaria = rivers
-            .select(Filters.disjoint(bavaria));
+            .disjoint(bavaria);
 
         TestUtils.checkNoDupes("rivers-outside-bavaria", TestUtils.getSet(riversOutsideBavaria));
 
@@ -66,8 +67,7 @@ public class DisjointTest
 
         map.add(bavaria).color("red");
 
-        for (Feature river : rivers
-            .select(Filters.disjoint(bavaria)))
+        for (Feature river : rivers.disjoint(bavaria))
         {
             map.add(river).color("blue");
         }
@@ -85,7 +85,7 @@ public class DisjointTest
         map.add(bavaria).color("red");
 
         TileIndexWalker walker = new TileIndexWalker(world.store());
-        Filter filter = Filters.disjoint(bavaria);
+        Filter filter = new DisjointFilter(bavaria);
 
         map.add(filter.bounds()).color("orange");
         walker.start(Box.ofWorld(), filter);

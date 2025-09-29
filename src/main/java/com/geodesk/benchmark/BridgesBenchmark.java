@@ -10,7 +10,6 @@ package com.geodesk.benchmark;
 import com.geodesk.geom.Box;
 import com.geodesk.feature.Feature;
 import com.geodesk.feature.Features;
-import com.geodesk.feature.Filters;
 
 import java.io.IOException;
 
@@ -37,8 +36,8 @@ public class BridgesBenchmark extends Benchmark
     @Override protected void perform()
     {
         count = bridges
-            .select(Filters.intersects(bavaria))
-            .select(Filters.intersects(danube))
+            .intersecting(bavaria)
+            .intersecting(danube)
             .count();
     }
 

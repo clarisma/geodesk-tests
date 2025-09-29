@@ -9,12 +9,13 @@ package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
 import com.geodesk.benchmark.SimpleBenchmark;
+import com.geodesk.feature.filter.CrossesFilter;
+import com.geodesk.feature.filter.IntersectsFilter;
 import com.geodesk.geom.Box;
 import com.geodesk.geom.Tile;
 import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Filter;
-import com.geodesk.feature.Filters;
 import com.geodesk.feature.store.TileIndexWalker;
 import com.geodesk.feature.store.Tip;
 import com.geodesk.util.MapMaker;
@@ -57,7 +58,7 @@ public class FastFilterTest
 
         int tileCount = 0;
         TileIndexWalker walker = new TileIndexWalker(world.store());
-        Filter filter = Filters.intersects(bavariaPoly);
+        Filter filter = new IntersectsFilter(bavariaPoly);
         walker.start(bavaria.bounds(), filter);
         while (walker.next())
         {
@@ -107,7 +108,7 @@ public class FastFilterTest
                 // .select("w[highway]")
                 // .select("n[place=city]")
                 .select("a[building]")
-                .select(Filters.intersects(bavariaPoly))
+                .intersecting(bavariaPoly)
                 .count());
         });
         Log.debug("Found %,d features.", count.get());
@@ -123,8 +124,8 @@ public class FastFilterTest
         PreparedGeometry bavariaPrepared = PreparedGeometryFactory.prepare(bavaria.toGeometry());
 
         long count = 0;
-        for(Feature f: world.select("w[highway]").select(
-            Filters.intersects(bavariaPrepared)))
+        for(Feature f: world.select("w[highway]")
+            .intersecting(bavariaPrepared))
         {
             if(!bavariaPrepared.intersects(f.toGeometry()))
             {
@@ -170,7 +171,7 @@ public class FastFilterTest
                 // .select("w[highway]")
                 // .select("n[place=city]")
                 .select("a[building]")
-                .select(Filters.within(bavariaPoly))
+                .within(bavariaPoly)
                 .count());
         });
         Log.debug("Found %,d features.", count.get());
@@ -187,7 +188,7 @@ public class FastFilterTest
 
         int tileCount = 0;
         TileIndexWalker walker = new TileIndexWalker(world.store());
-        Filter filter = Filters.crosses(rhineGeom);
+        Filter filter = new CrossesFilter(rhineGeom);
         walker.start(rhine.bounds(), filter);
         while (walker.next())
         {
@@ -212,8 +213,8 @@ public class FastFilterTest
         long start = System.currentTimeMillis();
         for(int i=0; i<runs; i++)
         {
-            count = world.select("w[highway][bridge]").select(
-                Filters.crosses(rhine)).count();
+            count = world.select("w[highway][bridge]")
+                .crossing(rhine).count();
         }
         long end = System.currentTimeMillis();
 
@@ -229,8 +230,8 @@ public class FastFilterTest
             .first();
 
         long count = 0;
-        for(Feature f: world.select("a[boundary=administrative][admin_level=4][name]").select(
-            Filters.touches(bavaria)))
+        for(Feature f: world.select("a[boundary=administrative][admin_level=4][name]")
+            .touching(bavaria))
         {
             Log.debug("- %s", f.stringValue("name"));
             count++;

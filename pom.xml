@@ -4,7 +4,7 @@
 
   <groupId>com.geodesk</groupId>
   <artifactId>geodesk-tests</artifactId>
-  <version>1.1.0</version>
+  <version>2.0.0</version>
   <packaging>jar</packaging>
 
   <name>GeoDesk Tests</name>
@@ -46,13 +46,6 @@
         <artifactId>oshi-core</artifactId>
         <version>6.1.6</version>
     </dependency>
-      <dependency>
-          <groupId>com.geodesk</groupId>
-          <artifactId>geodesk</artifactId>
-          <version>1.1.0</version>
-          <scope>compile</scope>
-      </dependency>
-
   </dependencies>
   
   <build>

@@ -8,11 +8,11 @@
 package com.geodesk.tests;
 
 import com.clarisma.common.util.Log;
+import com.geodesk.feature.filter.SlowWithinFilter;
 import com.geodesk.geom.Box;
 import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
-import com.geodesk.feature.Filters;
 import com.geodesk.util.MapMaker;
 import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
@@ -34,7 +34,7 @@ public class SpatialFilterTest
     @Test public void testSpatial()
     {
         long start = System.currentTimeMillis();
-        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        FeatureLibrary world = Features.open(TestSettings.golFile());
         Feature bavaria = world
             .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
@@ -82,7 +82,7 @@ public class SpatialFilterTest
     @Test public void testSpatialBuildings()
     {
         long start = System.currentTimeMillis();
-        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        FeatureLibrary world = Features.open(TestSettings.golFile());
         Feature bavaria = world
             .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
@@ -114,7 +114,7 @@ public class SpatialFilterTest
     @Test public void testSpatialBuildingsFilter()
     {
         long start = System.currentTimeMillis();
-        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        FeatureLibrary world = Features.open(TestSettings.golFile());
         Feature bavaria = world
             .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
@@ -130,7 +130,7 @@ public class SpatialFilterTest
                 Features places = world.select("a[building]");
                 long count = 0; // places.in(Box.of(bavariaPoly)).count();
 
-                for (Feature place : places.select(Filters.slowWithin(bavariaPrepared)))
+                for (Feature place : places.select(new SlowWithinFilter(bavariaPrepared)))
                 {
                     count++;
                 }
@@ -150,7 +150,7 @@ public class SpatialFilterTest
     @Test public void testSpatialBuildingsBbox()
     {
         long start = System.currentTimeMillis();
-        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        FeatureLibrary world = Features.open(TestSettings.golFile());
         Feature bavaria = world
             .select("a[boundary=administrative][admin_level=4][name:en=Bavaria]")
             .in(Box.atLonLat(12.0231, 48.3310))
@@ -180,7 +180,7 @@ public class SpatialFilterTest
     @Test public void testSpatialStates() throws IOException
     {
         long start = System.currentTimeMillis();
-        FeatureLibrary world = new FeatureLibrary("c:\\geodesk\\tests\\de.gol");
+        FeatureLibrary world = Features.open(TestSettings.golFile());
         Feature germany = world
             .select("a[boundary=administrative][admin_level=2][name:en=Germany]")
             .in(Box.atLonLat(12.0231, 48.3310))
@@ -294,7 +294,7 @@ public class SpatialFilterTest
                 cityCount++;
                 long cityBuildingCount = world
                     .select("a[building]")
-                    .select(Filters.slowWithin(city))
+                    .select(new SlowWithinFilter(city.toGeometry()))
                     .count();
                 if(cityBuildingCount > mostBuildings)
                 {
@@ -330,7 +330,7 @@ public class SpatialFilterTest
                 cityCount++;
                 long cityChurchCount = world
                     .select("na[amenity=place_of_worship][religion=christian]")
-                    .select(Filters.slowWithin(city))
+                    .select(new SlowWithinFilter(city.toGeometry()))
                     .count();
                 if(cityChurchCount > mostChurches)
                 {

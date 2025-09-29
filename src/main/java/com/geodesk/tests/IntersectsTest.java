@@ -12,9 +12,10 @@ import com.geodesk.feature.Feature;
 import com.geodesk.feature.FeatureId;
 import com.geodesk.feature.FeatureLibrary;
 import com.geodesk.feature.Features;
-import static com.geodesk.feature.Filters.*;
 import static com.geodesk.tests.TestUtils.*;
 
+import com.geodesk.feature.filter.SlowIntersectsFilter;
+import com.geodesk.feature.filter.SlowWithinFilter;
 import org.eclipse.collections.api.list.primitive.LongList;
 import org.eclipse.collections.api.list.primitive.MutableLongList;
 import org.eclipse.collections.impl.list.mutable.primitive.LongArrayList;
@@ -57,14 +58,14 @@ public class IntersectsTest
             .first().toGeometry();
         List<Feature> states = (List<Feature>)world
             .select("a[boundary=administrative][admin_level=4][name]")
-            .select(slowWithin(country)).toList();
+            .select(new SlowWithinFilter(country)).toList();
 
-        LongList inCountry = getFeatures(restaurants.select(slowWithin(country)));
+        LongList inCountry = getFeatures(restaurants.select(new SlowWithinFilter(country)));
         MutableLongList inStates = new LongArrayList();
         for(Feature state: states)
         {
             Log.debug("- %s", state.stringValue("name"));
-            LongList inState = getFeatures(restaurants.select(slowIntersects(state)));
+            LongList inState = getFeatures(restaurants.select(new SlowIntersectsFilter(state.toGeometry())));
             inStates.addAll(inState);
         }
 
@@ -90,7 +91,7 @@ public class IntersectsTest
         Geometry country = world
             .select("a[boundary=administrative][admin_level=2][name='United States']")
             .first().toGeometry();
-        timeQuery("%d buildings intersect USA", buildings.select(intersects(country)));
-        timeQuery("%d buildings within USA", buildings.select(within(country)));
+        timeQuery("%d buildings intersect USA", buildings.intersecting(country));
+        timeQuery("%d buildings within USA", buildings.within(country));
     }
 }
